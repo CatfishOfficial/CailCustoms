@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Plus, Trash2, ArrowLeft, LogOut } from "lucide-react";
+import { Plus, Trash2, ArrowLeft, LogOut, Lock } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_DATA, uid } from "@/lib/data";
 import Frame from "@/components/Frame";
@@ -86,7 +86,36 @@ export default function AdminClient({ initialData, userEmail }) {
   const [tab, setTab] = useState("products");
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
+  const [signedIn, setSignedIn] = useState(true);
   const firstRun = useRef(true);
+  const inFlight = useRef(false);
+  const latest = useRef(data);
+  latest.current = data;
+
+  // Confirm we actually have a session — without it every write is blocked by
+  // RLS and "saving" would fail silently.
+  useEffect(() => {
+    createClient()
+      .auth.getSession()
+      .then(({ data: { session } }) => setSignedIn(!!session));
+  }, []);
+
+  const doSave = async () => {
+    if (inFlight.current) return;
+    inFlight.current = true;
+    setSaving(true);
+    setSaveError("");
+    try {
+      await flush(latest.current);
+    } catch (e) {
+      // Surface the real Postgres/RLS message and log the full error for devtools.
+      console.error("[admin] save failed:", e);
+      setSaveError(e?.message || "save failed");
+    } finally {
+      inFlight.current = false;
+      setSaving(false);
+    }
+  };
 
   // Debounced live save — mirrors the prototype's autosave, but writes to Supabase.
   useEffect(() => {
@@ -96,16 +125,9 @@ export default function AdminClient({ initialData, userEmail }) {
     }
     setSaving(true);
     setSaveError("");
-    const t = setTimeout(async () => {
-      try {
-        await flush(data);
-      } catch (e) {
-        setSaveError(e?.message || "save failed");
-      } finally {
-        setSaving(false);
-      }
-    }, 800);
+    const t = setTimeout(doSave, 800);
     return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const s = data.settings;
@@ -190,11 +212,18 @@ export default function AdminClient({ initialData, userEmail }) {
         </div>
         <div className="admin-actions">
           <span className={`admin-save ${saveError ? "err" : ""}`}>{saveLabel}</span>
+          <button className="adm-ghost" onClick={doSave} disabled={saving}>save now</button>
           <button className="adm-ghost" onClick={resetData}>reset to defaults</button>
           <button className="adm-ghost" onClick={signOut}><LogOut size={14} /> sign out</button>
           <Link className="adm-primary" href="/"><ArrowLeft size={14} /> view site</Link>
         </div>
       </div>
+
+      {!signedIn && (
+        <div className="admin-warn">
+          <Lock size={14} /> you're not signed in — changes can't be saved. <Link href="/admin/login">sign in</Link>.
+        </div>
+      )}
 
       <div className="admin-tabs">
         {["products", "categories", "hero", "site"].map((t) => (

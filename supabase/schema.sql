@@ -86,23 +86,29 @@ alter table public.categories  enable row level security;
 alter table public.products    enable row level security;
 alter table public.hero_slides enable row level security;
 
-do $$
-declare t text;
-begin
-  foreach t in array array['settings','categories','products','hero_slides'] loop
-    -- public read
-    execute format($f$
-      drop policy if exists "%1$s_read" on public.%1$I;
-      create policy "%1$s_read" on public.%1$I for select using (true);
-    $f$, t);
-    -- authenticated write (insert / update / delete)
-    execute format($f$
-      drop policy if exists "%1$s_write" on public.%1$I;
-      create policy "%1$s_write" on public.%1$I for all
-        to authenticated using (true) with check (true);
-    $f$, t);
-  end loop;
-end $$;
+-- settings: public read, authenticated write
+drop policy if exists "settings_read"  on public.settings;
+create policy "settings_read"  on public.settings for select using (true);
+drop policy if exists "settings_write" on public.settings;
+create policy "settings_write" on public.settings for all to authenticated using (true) with check (true);
+
+-- categories: public read, authenticated write
+drop policy if exists "categories_read"  on public.categories;
+create policy "categories_read"  on public.categories for select using (true);
+drop policy if exists "categories_write" on public.categories;
+create policy "categories_write" on public.categories for all to authenticated using (true) with check (true);
+
+-- products: public read, authenticated write
+drop policy if exists "products_read"  on public.products;
+create policy "products_read"  on public.products for select using (true);
+drop policy if exists "products_write" on public.products;
+create policy "products_write" on public.products for all to authenticated using (true) with check (true);
+
+-- hero_slides: public read, authenticated write
+drop policy if exists "hero_slides_read"  on public.hero_slides;
+create policy "hero_slides_read"  on public.hero_slides for select using (true);
+drop policy if exists "hero_slides_write" on public.hero_slides;
+create policy "hero_slides_write" on public.hero_slides for all to authenticated using (true) with check (true);
 
 -- ---------------------------------------------------------------------------
 -- STORAGE — public "media" bucket for uploaded images
