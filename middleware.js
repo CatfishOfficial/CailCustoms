@@ -3,13 +3,23 @@ import { createServerClient } from "@supabase/ssr";
 
 // Refreshes the Supabase auth session cookie on every request so server
 // components see an up-to-date session, and guards the /admin route.
+//
+// Fail-safe: if Supabase env vars are missing or the auth call throws, we let
+// the request through instead of 500-ing the whole site. The /admin page also
+// checks auth server-side, so protection doesn't depend on middleware alone.
 export async function middleware(request) {
   let response = NextResponse.next({ request });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !anonKey) return response; // not configured yet — don't crash
+
+  const path = request.nextUrl.pathname;
+  const isAdmin = path.startsWith("/admin");
+  const isLogin = path.startsWith("/admin/login");
+
+  try {
+    const supabase = createServerClient(url, anonKey, {
       cookies: {
         getAll() {
           return request.cookies.getAll();
@@ -24,29 +34,28 @@ export async function middleware(request) {
           );
         },
       },
+    });
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    // Unauthenticated users hitting the admin app get sent to login.
+    if (isAdmin && !isLogin && !user) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/admin/login";
+      return NextResponse.redirect(redirectUrl);
     }
-  );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const path = request.nextUrl.pathname;
-  const isAdmin = path.startsWith("/admin");
-  const isLogin = path.startsWith("/admin/login");
-
-  // Unauthenticated users hitting the admin app get sent to login.
-  if (isAdmin && !isLogin && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/admin/login";
-    return NextResponse.redirect(url);
-  }
-
-  // Already logged in? Skip the login screen.
-  if (isLogin && user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/admin";
-    return NextResponse.redirect(url);
+    // Already logged in? Skip the login screen.
+    if (isLogin && user) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/admin";
+      return NextResponse.redirect(redirectUrl);
+    }
+  } catch {
+    // Auth check failed (network/config) — fall through and let the page
+    // render. The /admin page's own server-side guard still applies.
   }
 
   return response;
