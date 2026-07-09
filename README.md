@@ -21,7 +21,7 @@ inquiry. That's intentional.
 | `/shop/all` | everything / all products |
 | `/product/[id]` | product detail (server-rendered, shareable) |
 | `/admin` | protected admin (login required) |
-| `/admin/login` | magic-link sign in |
+| `/admin/login` | email + password sign in |
 
 ## Local setup
 
@@ -43,12 +43,15 @@ Without Supabase configured the storefront still renders using the built-in
    - `seed.sql` loads the prototype's default content so the site isn't empty.
 3. **Project Settings → API**: copy the Project URL and the `anon` public key
    into `.env.local` (see `.env.local.example`).
-4. **Auth → Providers → Email**: keep Email on. For a private admin, turn
-   **off** "Allow new users to sign up" and instead **invite** each teammate
-   (Auth → Users → Invite user). Magic links then only work for invited emails.
-5. **Auth → URL Configuration**: add your site URL (and
-   `http://localhost:3000`) to the redirect allow-list so magic links return to
-   `/auth/callback`.
+4. **Auth → Providers → Email**: keep Email on and turn **off** "Allow new
+   users to sign up" — there's no public sign up; the admin is invite-only.
+5. **Auth → Users → Add user**: create an account for each teammate with an
+   email + password (check "Auto Confirm User"). They sign in at `/admin/login`
+   with those credentials. To reset a password, edit the user in Supabase.
+
+> Admin login is plain email + password handled entirely client-side, so there
+> are **no** magic-link emails, no `Site URL` / redirect-allow-list config, and
+> no `/auth/callback` to worry about.
 
 ### Environment variables
 
@@ -82,7 +85,7 @@ order" when it starts with "from" or "let".
 1. Push this repo to GitHub.
 2. Import it in Vercel.
 3. Add the environment variables above in the Vercel project settings.
-4. Deploy. (Add your Vercel domain to Supabase Auth's redirect allow-list.)
+4. Deploy.
 
 ## Project map
 
@@ -93,8 +96,7 @@ app/
   shop/[category]/      category + /shop/all
   product/[id]/         product detail (SSR + OG metadata)
   admin/                protected admin
-  admin/login/          magic-link sign in
-  auth/callback/        magic-link session exchange
+  admin/login/          email + password sign in
   globals.css           the prototype's full stylesheet (verbatim) + login/upload additions
 components/             Frame, HeroSlides, Marquee, ProductCard, views, shell, admin/*
 lib/
