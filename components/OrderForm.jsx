@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { composeOrderText } from "@/lib/orders";
+import ContactExtras from "./ContactExtras";
 import { useCart } from "./cart/CartContext";
 
 // The "checkout": no payment — composes the cart into a message, takes contact
@@ -13,6 +14,7 @@ export default function OrderForm({ settings }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [contacts, setContacts] = useState([]);
   const [message, setMessage] = useState("");
   const [website, setWebsite] = useState(""); // honeypot — humans never see it
   const [busy, setBusy] = useState(false);
@@ -37,6 +39,7 @@ export default function OrderForm({ settings }) {
         name,
         email,
         phone,
+        contacts: contacts.filter((c) => c.value.trim()),
         message,
         items: items.map(({ id, name: n, price, size, qty }) => ({ id, name: n, price, size, qty })),
       });
@@ -111,6 +114,7 @@ export default function OrderForm({ settings }) {
             <span>phone (optional)</span>
             <input className="f-input" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" />
           </label>
+          <ContactExtras contacts={contacts} onChange={setContacts} />
           <label className="f-field">
             <span>anything else?</span>
             <textarea className="f-area" rows={4} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="sizing notes, deadlines, questions — whatever helps" />

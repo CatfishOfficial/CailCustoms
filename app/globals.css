@@ -322,6 +322,17 @@ body{background:#F2EEE4;}
 .f-area{resize:vertical;min-height:80px;line-height:1.45;}
 .hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden;}
 
+/* extra contact handles (new — "+ add another way to reach you") */
+.cx{display:flex;flex-direction:column;gap:8px;}
+.cx-row{display:flex;gap:8px;align-items:center;}
+.cx-type{flex:0 0 132px;font-family:var(--mono);font-size:12px;text-transform:uppercase;}
+.cc .cx-del{display:grid;place-items:center;width:34px;height:34px;flex:0 0 auto;border:1px solid var(--line);border-radius:5px;color:var(--muted);}
+.cc .cx-del:hover{border-color:#C0392B;color:#C0392B;}
+.cc .cx-add{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);border:1px dashed var(--line);border-radius:999px;padding:7px 13px;transition:color .15s,border-color .15s;}
+.cc .cx-add:hover{color:var(--accent);border-color:var(--accent);}
+.ord-cx{font-family:var(--mono);font-size:12px;color:var(--muted);}
+.ord-cx b{color:var(--ink);font-weight:700;}
+
 /* order request page (new) */
 .order-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(24px,4vw,52px);align-items:start;}
 .order-summary{border:1px solid var(--line);border-radius:8px;background:var(--card);padding:20px;position:sticky;top:90px;}

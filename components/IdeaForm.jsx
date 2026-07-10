@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { slugify } from "@/lib/data";
 import { ideaFormFor } from "@/lib/ideaForms";
+import ContactExtras from "./ContactExtras";
 import FileDrop from "./FileDrop";
 
 // The custom-work pitch form, rendered on /ideas/[category]. Structured
@@ -17,6 +18,8 @@ export default function IdeaForm({ category }) {
   const [files, setFiles] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [contacts, setContacts] = useState([]);
   const [website, setWebsite] = useState(""); // honeypot
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
@@ -53,6 +56,8 @@ export default function IdeaForm({ category }) {
         files: paths,
         name,
         email,
+        phone,
+        contacts: contacts.filter((c) => c.value.trim()),
       });
       if (error) throw error;
       setSent(true);
@@ -116,7 +121,12 @@ export default function IdeaForm({ category }) {
           <span>email</span>
           <input className="f-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
         </label>
+        <label className="f-field">
+          <span>phone (optional)</span>
+          <input className="f-input" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" />
+        </label>
       </div>
+      <ContactExtras contacts={contacts} onChange={setContacts} />
       <label className="hp" aria-hidden="true">
         website
         <input type="text" name="website" value={website} onChange={(e) => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" />

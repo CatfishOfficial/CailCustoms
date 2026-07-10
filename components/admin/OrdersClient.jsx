@@ -28,12 +28,15 @@ function StatusSelect({ table, row, statuses, onChange, onError }) {
   );
 }
 
-function Contact({ name, email, phone }) {
+function Contact({ name, email, phone, contacts }) {
   return (
     <div className="ord-contact">
       <b>{name || "no name"}</b>
       {email && <a href={`mailto:${email}`}>{email}</a>}
       {phone && <a href={telHref(phone)}>{phone}</a>}
+      {(contacts || []).map((c, i) => (
+        <span className="ord-cx" key={i}>{c.type}: <b>{c.value}</b></span>
+      ))}
     </div>
   );
 }
@@ -100,7 +103,7 @@ export default function OrdersClient({ initialOrders, initialIdeas, userEmail })
                   <span className="ord-when">{fmtWhen(r.created_at)}</span>
                   <StatusSelect table="orders" row={r} statuses={ORDER_STATUSES} onChange={patchStatus(setOrders)} onError={setErr} />
                 </div>
-                <Contact name={r.name} email={r.email} phone={r.phone} />
+                <Contact name={r.name} email={r.email} phone={r.phone} contacts={r.contacts} />
                 <pre className="ord-items">{composeOrderText(r.items)}</pre>
                 {r.message && <p className="ord-msg">“{r.message}”</p>}
               </article>
@@ -110,7 +113,7 @@ export default function OrdersClient({ initialOrders, initialIdeas, userEmail })
                   <span className="ord-when">{fmtWhen(r.created_at)} · <b>{(r.category || "?").toLowerCase()}</b></span>
                   <StatusSelect table="idea_submissions" row={r} statuses={IDEA_STATUSES} onChange={patchStatus(setIdeas)} onError={setErr} />
                 </div>
-                <Contact name={r.name} email={r.email} />
+                <Contact name={r.name} email={r.email} phone={r.phone} contacts={r.contacts} />
                 {r.fields && Object.keys(r.fields).length > 0 && (
                   <dl className="ord-fields">
                     {Object.entries(r.fields).map(([k, v]) => (

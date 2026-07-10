@@ -62,6 +62,12 @@ alter table public.idea_submissions drop constraint if exists idea_submissions_s
 alter table public.idea_submissions add constraint idea_submissions_status_check
   check (status in ('new','contacted','approved','designing','building','finishing','done','passed'));
 
+-- extra ways to reach the customer: phone on ideas, and a free-form list of
+-- handles ([{type,value}] — instagram / tiktok / discord / …) on both inboxes.
+alter table public.idea_submissions add column if not exists phone text not null default '';
+alter table public.orders           add column if not exists contacts jsonb not null default '[]'::jsonb;
+alter table public.idea_submissions add column if not exists contacts jsonb not null default '[]'::jsonb;
+
 -- ---------------------------------------------------------------------------
 -- ROW LEVEL SECURITY — public insert only; staff read/update/delete
 -- ---------------------------------------------------------------------------
