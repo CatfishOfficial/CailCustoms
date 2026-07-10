@@ -408,6 +408,11 @@ body{background:#F2EEE4;}
 .cc .filedrop-list button{display:grid;place-items:center;margin-left:auto;color:var(--muted);}
 .cc .filedrop-list button:hover{color:#C0392B;}
 
+/* hero accent flash (new — once-per-session 70s rainbow sweep on the accent word) */
+.hero-flash{display:inline-block;}
+.hero-flash.flash70{background-image:linear-gradient(90deg,var(--accent) 0%,var(--accent) 32%,#C1502E 38%,#E8853B 44%,#E9B44C 50%,#7A8B4C 56%,#2540E6 62%,var(--accent) 68%,var(--accent) 100%);background-size:300% 100%;background-position:0% 0;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:heroflash 1.5s ease-in-out 1.05s both;}
+@keyframes heroflash{from{background-position:100% 0;}to{background-position:0% 0;}}
+
 /* admin hub (new — /admin landing chooser) */
 .hub-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px;}
 .cc .hub-card{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:28px 26px;color:var(--ink);transition:transform .15s,border-color .15s,box-shadow .15s;}

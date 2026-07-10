@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Frame from "./Frame";
 import HeroSlides from "./HeroSlides";
@@ -16,6 +16,19 @@ export default function HomeView({ data }) {
     if (el && !revealRefs.current.includes(el)) revealRefs.current.push(el);
   };
   const featured = products.filter((p) => p.featured);
+  const [flash, setFlash] = useState(false);
+
+  // Once per session: sweep a little 70s rainbow through the accent hero word.
+  useEffect(() => {
+    try {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (window.sessionStorage.getItem("cc-hero-flash")) return;
+      window.sessionStorage.setItem("cc-hero-flash", "1");
+      setFlash(true);
+    } catch {
+      // storage blocked — skip the flourish
+    }
+  }, []);
 
   useEffect(() => {
     const els = revealRefs.current.filter(Boolean);
@@ -59,7 +72,9 @@ export default function HomeView({ data }) {
           <h1 className="hero-title">
             <span className="line l1">{settings.heroLines[0]}</span>
             <span className="line l2">{settings.heroLines[1]}</span>
-            <span className="line l3">{settings.heroLines[2]}</span>
+            <span className="line l3">
+              <span className={`hero-flash ${flash ? "flash70" : ""}`}>{settings.heroLines[2]}</span>
+            </span>
           </h1>
           <p className="hero-sub">{settings.heroSub}</p>
           <div className="hero-actions">
