@@ -179,6 +179,11 @@ export default function HomeView({ data }) {
         <span className="idea-float f2" aria-hidden="true">✶</span>
         <span className="idea-float f3" aria-hidden="true">❋</span>
         <div className="pitchband-inner">
+          <div className="pitchband-badge" aria-hidden="true">
+            <b>CAIL&amp;CO.</b>
+            <span className="pb-rule" />
+            <em>est. 2026&ensp;|&ensp;lubbock, tx</em>
+          </div>
           <span className="pitchband-eyebrow">custom work · open call</span>
           <h2 className="pitchband-title" id="pitchband-title">
             hey — give us your <span className="idea-tilt">idea.</span>
