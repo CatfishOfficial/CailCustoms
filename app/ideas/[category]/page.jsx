@@ -9,9 +9,20 @@ export async function generateMetadata({ params }) {
   const data = await getSiteData();
   const cat = categoryBySlug(data.categories, params.category);
   if (!cat) return { title: "got an idea?" };
+  const pitch = ideaFormFor(cat.name).pitch;
   return {
     title: `got an idea? · ${cat.name.toLowerCase()}`,
-    description: ideaFormFor(cat.name).pitch,
+    description: pitch,
+    openGraph: {
+      title: `Got an idea? · ${cat.name} — Cail Customs`,
+      description: pitch,
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: `Got an idea? · ${cat.name} — Cail Customs`,
+      description: pitch,
+    },
   };
 }
 

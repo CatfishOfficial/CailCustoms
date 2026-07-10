@@ -14,10 +14,25 @@ async function resolve(slug) {
 export async function generateMetadata({ params }) {
   const resolved = await resolve(params.category);
   if (!resolved) return { title: "not found" };
-  const title = resolved.cat === "All" ? "everything" : resolved.cat;
+  const isAll = resolved.cat === "All";
+  const title = isAll ? "everything" : resolved.cat;
+  const description = resolved.meta?.blurb || "browse the shop.";
+  const cover = resolved.meta?.image || null;
   return {
     title,
-    description: resolved.meta?.blurb || "browse the shop.",
+    description,
+    openGraph: {
+      title: `${title} — Cail Customs`,
+      description,
+      type: "website",
+      ...(cover && { images: [{ url: cover, alt: title }] }),
+    },
+    twitter: {
+      card: cover ? "summary_large_image" : "summary",
+      title: `${title} — Cail Customs`,
+      description,
+      ...(cover && { images: [cover] }),
+    },
   };
 }
 
