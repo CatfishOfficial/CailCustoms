@@ -27,7 +27,14 @@ export default function HeroSlides({ slides }) {
     <div className="hero-slides">
       {slides.map((s, k) => (
         <div key={k} className="hero-slide" style={slideStyle((k - (i % n) + n) % n, n)}>
-          <Frame tone={s.tone} label={s.label} image={s.image} />
+          <Frame
+            tone={s.tone}
+            label={s.label}
+            image={s.image}
+            priority={k === 0}
+            quality={k === 0 ? undefined : 100}
+            sizes="(max-width: 860px) 100vw, 50vw"
+          />
         </div>
       ))}
     </div>

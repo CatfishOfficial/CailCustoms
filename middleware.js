@@ -17,6 +17,9 @@ export async function middleware(request) {
   const path = request.nextUrl.pathname;
   const isAdmin = path.startsWith("/admin");
   const isLogin = path.startsWith("/admin/login");
+  const isAccountDash = path.startsWith("/account") && !path.startsWith("/account/login") && !path.startsWith("/account/signup");
+  const isAccountLogin = path.startsWith("/account/login");
+  const isAccountSignup = path.startsWith("/account/signup");
 
   try {
     const supabase = createServerClient(url, anonKey, {
@@ -47,10 +50,24 @@ export async function middleware(request) {
       return NextResponse.redirect(redirectUrl);
     }
 
-    // Already logged in? Skip the login screen.
+    // Already logged in? Skip the admin login screen.
     if (isLogin && user) {
       const redirectUrl = request.nextUrl.clone();
       redirectUrl.pathname = "/admin";
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    // Unauthenticated users hitting the account dashboard get sent to sign-in.
+    if (isAccountDash && !user) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/account/login";
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    // Logged-in users don't need to see the account auth pages.
+    if ((isAccountLogin || isAccountSignup) && user) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/account";
       return NextResponse.redirect(redirectUrl);
     }
   } catch {
