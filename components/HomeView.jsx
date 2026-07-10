@@ -73,7 +73,13 @@ export default function HomeView({ data }) {
             <span className="line l1">{settings.heroLines[0]}</span>
             <span className="line l2">{settings.heroLines[1]}</span>
             <span className="line l3">
-              <span className={`hero-flash ${flash ? "flash70" : ""}`}>{settings.heroLines[2]}</span>
+              <span className={`hero-flash ${flash ? "flash70" : ""}`} aria-label={settings.heroLines[2]}>
+                {settings.heroLines[2].split("").map((ch, i) => (
+                  <span key={i} className="hero-flash-ch" aria-hidden="true" style={{ animationDelay: `${1 + i * 0.06}s` }}>
+                    {ch}
+                  </span>
+                ))}
+              </span>
             </span>
           </h1>
           <p className="hero-sub">{settings.heroSub}</p>

@@ -408,10 +408,11 @@ body{background:#F2EEE4;}
 .cc .filedrop-list button{display:grid;place-items:center;margin-left:auto;color:var(--muted);}
 .cc .filedrop-list button:hover{color:#C0392B;}
 
-/* hero accent flash (new — once-per-session 70s rainbow sweep on the accent word) */
+/* hero accent flash (new — once-per-session 70s color run, letter by letter) */
 .hero-flash{display:inline-block;}
-.hero-flash.flash70{background-image:linear-gradient(90deg,var(--accent) 0%,var(--accent) 32%,#C1502E 38%,#E8853B 44%,#E9B44C 50%,#7A8B4C 56%,#2540E6 62%,var(--accent) 68%,var(--accent) 100%);background-size:300% 100%;background-position:0% 0;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:heroflash 1.5s ease-in-out 1.05s both;}
-@keyframes heroflash{from{background-position:100% 0;}to{background-position:0% 0;}}
+.hero-flash-ch{display:inline-block;white-space:pre;}
+.flash70 .hero-flash-ch{animation:letterflash .45s linear both;}
+@keyframes letterflash{0%,100%{color:var(--accent);}18%{color:#C1502E;}38%{color:#E8853B;}58%{color:#E9B44C;}78%{color:#7A8B4C;}}
 
 /* pitch band (new — homepage "give us your idea" 70s section) */
 .pitchband{position:relative;overflow:hidden;background:#E9B44C;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);}
