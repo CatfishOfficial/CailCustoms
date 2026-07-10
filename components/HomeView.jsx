@@ -167,6 +167,28 @@ export default function HomeView({ data }) {
         </section>
       )}
 
+      <section className="pitchband" ref={setReveal} aria-labelledby="pitchband-title">
+        <span className="idea-arcs" aria-hidden="true" />
+        <span className="idea-float f1" aria-hidden="true">✿</span>
+        <span className="idea-float f2" aria-hidden="true">✶</span>
+        <span className="idea-float f3" aria-hidden="true">❋</span>
+        <div className="pitchband-inner">
+          <span className="pitchband-eyebrow">custom work · open call</span>
+          <h2 className="pitchband-title" id="pitchband-title">
+            hey — give us your <span className="idea-tilt">idea.</span>
+          </h2>
+          <p className="pitchband-sub">we'll make it a reality.</p>
+          <span className="idea-squiggle" aria-hidden="true" />
+          <div className="pitchband-links">
+            {categories.map((c) => (
+              <Link key={c.name} className="pitchband-pill" href={`/ideas/${slugify(c.name)}`}>
+                {c.name.toLowerCase()} →
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="about" id="about" ref={setReveal}>
         <p className="about-eyebrow">who's behind it</p>
         <p className="about-line">{settings.about}</p>
