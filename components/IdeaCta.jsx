@@ -15,7 +15,7 @@ export default function IdeaCta({ category }) {
         <span className="idea-arcs" aria-hidden="true" />
         <span className="idea-burst" aria-hidden="true">✶</span>
         <span className="idea-cta-txt">
-          <b>got an idea?</b>
+          <b>got an <span className="idea-tilt">idea?</span></b>
           <em>{form.pitch}</em>
         </span>
         <span className="idea-go">pitch it →</span>

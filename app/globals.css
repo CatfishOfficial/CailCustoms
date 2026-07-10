@@ -357,15 +357,26 @@ body{background:#F2EEE4;}
 
 /* custom idea form (new — per-category pitch section) */
 .idea{margin-top:clamp(48px,7vw,80px);border-top:1px solid var(--line);padding-top:clamp(32px,4vw,48px);}
-.cc .idea-cta{position:relative;overflow:hidden;display:flex;align-items:center;gap:20px;width:100%;text-align:left;border:2px solid var(--ink);border-radius:18px;background:var(--card);padding:28px 30px;color:var(--ink);transition:transform .2s,box-shadow .2s;}
-.cc .idea-cta:hover{transform:translate(-3px,-3px) rotate(-.4deg);box-shadow:6px 6px 0 var(--ink);}
-.idea-arcs{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 100% -20px,transparent 64px,#C1502E 64px 82px,#E8853B 82px 100px,#E9B44C 100px 118px,#7A8B4C 118px 136px,var(--accent) 136px 154px,transparent 154px);transform-origin:100% 0;transition:transform .35s;}
-.cc .idea-cta:hover .idea-arcs{transform:scale(1.18);}
-.idea-burst{position:relative;font-size:38px;line-height:1;color:#C1502E;flex:0 0 auto;transition:transform .35s;}
+.cc .idea-cta{position:relative;overflow:hidden;display:flex;align-items:center;gap:24px;width:100%;text-align:left;border:2px solid var(--ink);border-radius:22px;background:var(--card);padding:clamp(34px,5vw,52px) clamp(28px,4vw,46px);color:var(--ink);transition:transform .2s,box-shadow .2s,background .2s;}
+.cc .idea-cta:hover{transform:translate(-3px,-3px) rotate(-.4deg);box-shadow:8px 8px 0 var(--ink);background:#FBF4E2;}
+.idea-arcs{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 100% -20px,transparent 64px,#C1502E 64px 82px,#E8853B 82px 100px,#E9B44C 100px 118px,#7A8B4C 118px 136px,var(--accent) 136px 154px,transparent 154px),radial-gradient(circle at -12px 115%,transparent 34px,#7A8B4C 34px 48px,#E9B44C 48px 62px,#E8853B 62px 76px,#C1502E 76px 90px,transparent 90px);transform-origin:100% 0;transition:transform .35s;}
+.cc .idea-cta:hover .idea-arcs{transform:scale(1.12);}
+.idea-burst{position:relative;font-size:48px;line-height:1;color:#C1502E;flex:0 0 auto;transition:transform .35s;}
 .cc .idea-cta:hover .idea-burst{transform:rotate(120deg) scale(1.2);color:#E8853B;}
+.idea-spin{animation:spin70 9s linear infinite;}
+@keyframes spin70{to{transform:rotate(360deg);}}
+.idea-tilt{display:inline-block;transform:rotate(-3deg);color:#C1502E;text-shadow:2px 2px 0 #E9B44C,4px 4px 0 var(--accent);transition:transform .2s;}
+.cc .idea-cta:hover .idea-tilt{transform:rotate(3deg) scale(1.06);}
+.ideapage-title .idea-tilt{text-shadow:3px 3px 0 #E9B44C,6px 6px 0 var(--accent);}
 .idea-cta-txt{position:relative;min-width:0;}
-.idea-cta-txt b{display:block;font-family:var(--display);font-size:clamp(26px,4vw,42px);text-transform:uppercase;letter-spacing:.02em;line-height:1;text-shadow:2px 2px 0 #E9B44C,4px 4px 0 #C1502E;}
-.idea-cta-txt em{display:block;font-style:normal;font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:10px;max-width:44ch;}
+.idea-cta-txt b{display:block;font-family:var(--display);font-size:clamp(32px,5vw,56px);text-transform:uppercase;letter-spacing:.02em;line-height:1;text-shadow:2px 2px 0 #E9B44C,4px 4px 0 #C1502E;}
+.idea-cta-txt em{display:block;font-style:normal;font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:12px;max-width:44ch;}
+.idea-float{position:absolute;pointer-events:none;line-height:1;color:#E8853B;animation:bob70 5s ease-in-out infinite;}
+.idea-float.f1{top:18px;left:38%;font-size:26px;color:#7A8B4C;animation-delay:.4s;}
+.idea-float.f2{bottom:22px;left:56%;font-size:22px;color:var(--accent);animation-delay:1.3s;}
+.idea-float.f3{top:34px;right:24%;font-size:18px;color:#C1502E;animation-delay:2.1s;}
+@keyframes bob70{0%,100%{transform:translateY(0) rotate(-10deg);}50%{transform:translateY(-9px) rotate(12deg);}}
+.idea-squiggle{position:relative;display:block;width:min(320px,70%);height:14px;margin:2px 0 14px;background:radial-gradient(circle at 50% 100%,transparent 4px,#C1502E 4px 7px,transparent 7px) 0 0/22px 11px repeat-x,radial-gradient(circle at 50% 0%,transparent 4px,#E8853B 4px 7px,transparent 7px) 11px 11px/22px 11px repeat-x;background-repeat:repeat-x;}
 .idea-go{position:relative;margin-left:auto;font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink);background:#E9B44C;border:2px solid var(--ink);padding:11px 16px;border-radius:999px;transform:rotate(4deg);transition:transform .2s,background .2s;white-space:nowrap;}
 .cc .idea-cta:hover .idea-go{transform:rotate(-4deg) scale(1.1);background:#E8853B;}
 .idea-pitch{font-size:15px;color:var(--muted);max-width:56ch;margin-bottom:6px;}

@@ -33,9 +33,13 @@ export default async function IdeaPage({ params }) {
 
       <header className="ideapage-head">
         <span className="idea-arcs" aria-hidden="true" />
-        <span className="idea-burst" aria-hidden="true">✶</span>
+        <span className="idea-burst idea-spin" aria-hidden="true">✶</span>
+        <span className="idea-float f1" aria-hidden="true">✿</span>
+        <span className="idea-float f2" aria-hidden="true">❋</span>
+        <span className="idea-float f3" aria-hidden="true">✶</span>
         <span className="sec-eyebrow">custom work · {cat.name.toLowerCase()}</span>
-        <h1 className="ideapage-title">got an idea?</h1>
+        <h1 className="ideapage-title">got an <span className="idea-tilt">idea?</span></h1>
+        <span className="idea-squiggle" aria-hidden="true" />
         <p className="idea-pitch">{form.pitch} tell us everything below — sketches and reference files welcome.</p>
       </header>
 
