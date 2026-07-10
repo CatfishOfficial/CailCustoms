@@ -122,8 +122,8 @@ export default function IdeaForm({ category }) {
           <input className="f-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
         </label>
         <label className="f-field">
-          <span>phone (optional)</span>
-          <input className="f-input" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" />
+          <span>phone</span>
+          <input className="f-input" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required autoComplete="tel" />
         </label>
       </div>
       <ContactExtras contacts={contacts} onChange={setContacts} />
