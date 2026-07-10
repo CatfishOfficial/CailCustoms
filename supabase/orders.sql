@@ -46,7 +46,7 @@ create table if not exists public.idea_submissions (
   id         uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
   status     text not null default 'new'
-             check (status in ('new','contacted','done')),
+             check (status in ('new','contacted','approved','designing','building','finishing','done','passed')),
   category   text not null default '',
   fields     jsonb not null default '{}'::jsonb,  -- structured per-category answers
   idea       text not null default '',
@@ -55,6 +55,12 @@ create table if not exists public.idea_submissions (
   email      text not null default ''
 );
 create index if not exists idea_submissions_created_idx on public.idea_submissions (created_at desc);
+
+-- upgrade path: earlier versions of this file created the table with only
+-- ('new','contacted','done') — swap in the full custom-work pipeline.
+alter table public.idea_submissions drop constraint if exists idea_submissions_status_check;
+alter table public.idea_submissions add constraint idea_submissions_status_check
+  check (status in ('new','contacted','approved','designing','building','finishing','done','passed'));
 
 -- ---------------------------------------------------------------------------
 -- ROW LEVEL SECURITY — public insert only; staff read/update/delete

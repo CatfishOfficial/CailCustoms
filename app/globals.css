@@ -340,7 +340,7 @@ body{background:#F2EEE4;}
 .ord-when{font-family:var(--mono);font-size:12px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);}
 .ord-status{width:auto;min-width:130px;font-family:var(--mono);font-size:12px;text-transform:uppercase;}
 .ord-status.s-new{border-color:var(--accent);color:var(--accent);}
-.ord-status.s-done,.ord-status.s-cancelled{color:var(--muted);}
+.ord-status.s-done,.ord-status.s-cancelled,.ord-status.s-passed{color:var(--muted);}
 .ord-contact{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;font-size:14px;}
 .cc .ord-contact a{font-family:var(--mono);font-size:12px;color:var(--accent);}
 .cc .ord-contact a:hover{text-decoration:underline;}
@@ -396,6 +396,16 @@ body{background:#F2EEE4;}
 .filedrop-list em{font-style:normal;color:var(--muted);}
 .cc .filedrop-list button{display:grid;place-items:center;margin-left:auto;color:var(--muted);}
 .cc .filedrop-list button:hover{color:#C0392B;}
+
+/* admin hub (new — /admin landing chooser) */
+.hub-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px;}
+.cc .hub-card{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:28px 26px;color:var(--ink);transition:transform .15s,border-color .15s,box-shadow .15s;}
+.cc .hub-card:hover{transform:translateY(-3px);border-color:var(--ink);box-shadow:0 10px 24px rgba(24,23,19,.08);}
+.hub-card svg{color:var(--accent);}
+.hub-card b{display:flex;align-items:center;gap:10px;font-family:var(--display);font-size:clamp(20px,2.6vw,28px);font-weight:400;text-transform:uppercase;letter-spacing:.02em;}
+.hub-card em{font-style:normal;font-family:var(--mono);font-size:12px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);}
+.hub-badge{font-family:var(--mono);font-size:11px;letter-spacing:.03em;background:var(--accent);color:#fff;padding:4px 9px;border-radius:999px;}
+@media(max-width:720px){.hub-cards{grid-template-columns:1fr;}}
 
 /* cart/order responsive */
 @media(max-width:860px){.order-grid{grid-template-columns:1fr;}.order-summary{position:static;}}

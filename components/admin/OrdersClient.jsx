@@ -61,7 +61,7 @@ export default function OrdersClient({ initialOrders, initialIdeas, userEmail })
           <h1 className="admin-title">Requests</h1>
         </div>
         <div className="admin-actions">
-          <Link className="adm-ghost" href="/admin"><Wrench size={14} /> manage the shop</Link>
+          <Link className="adm-ghost" href="/admin/manage"><Wrench size={14} /> manage the shop</Link>
           <Link className="adm-primary" href="/"><ArrowLeft size={14} /> view site</Link>
         </div>
       </div>
