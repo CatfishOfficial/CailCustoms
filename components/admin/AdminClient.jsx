@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Plus, Trash2, ArrowLeft, LogOut, Lock } from "lucide-react";
+import { Plus, Trash2, ArrowLeft, LogOut, Lock, Inbox } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_DATA, uid } from "@/lib/data";
 import Frame from "@/components/Frame";
@@ -62,7 +62,8 @@ async function flush(data) {
 
   const prods = data.products.map((p, i) => ({
     id: p.id, name: p.name, cat: p.cat, price: p.price, tone: p.tone,
-    blurb: p.blurb, description: p.desc, images: p.images, featured: p.featured, position: i,
+    blurb: p.blurb, description: p.desc, images: p.images, sizes: p.sizes || [],
+    featured: p.featured, position: i,
   }));
   if (prods.length) {
     const { error } = await supabase.from("products").upsert(prods);
@@ -146,7 +147,7 @@ export default function AdminClient({ initialData, userEmail }) {
     setData((d) => ({
       ...d,
       products: [
-        { id: uid(), name: "New listing", cat: d.categories[0]?.name || "Everything", price: "$0", tone: "t2", blurb: "", desc: "", images: [], featured: false },
+        { id: uid(), name: "New listing", cat: d.categories[0]?.name || "Everything", price: "$0", tone: "t2", blurb: "", desc: "", images: [], sizes: [], featured: false },
         ...d.products,
       ],
     }));
@@ -214,6 +215,7 @@ export default function AdminClient({ initialData, userEmail }) {
           <span className={`admin-save ${saveError ? "err" : ""}`}>{saveLabel}</span>
           <button className="adm-ghost" onClick={doSave} disabled={saving}>save now</button>
           <button className="adm-ghost" onClick={resetData}>reset to defaults</button>
+          <Link className="adm-ghost" href="/admin/orders"><Inbox size={14} /> orders</Link>
           <button className="adm-ghost" onClick={signOut}><LogOut size={14} /> sign out</button>
           <Link className="adm-primary" href="/"><ArrowLeft size={14} /> view site</Link>
         </div>
@@ -248,6 +250,12 @@ export default function AdminClient({ initialData, userEmail }) {
                   </label>
                   <Field label="price" value={p.price} onChange={(v) => patchProduct(p.id, { price: v })} ph="$28 / from $80 / let's talk" />
                 </div>
+                <Field
+                  label="sizes (comma-separated · blank = one size)"
+                  value={(p.sizes || []).join(", ")}
+                  onChange={(v) => patchProduct(p.id, { sizes: v.split(",").map((x) => x.trim()).filter(Boolean) })}
+                  ph="S, M, L, XL"
+                />
                 <Field label="short blurb (shown on cards)" value={p.blurb} onChange={(v) => patchProduct(p.id, { blurb: v })} />
                 <Field label="description (product page)" value={p.desc} onChange={(v) => patchProduct(p.id, { desc: v })} area />
                 <ToneField value={p.tone} onChange={(v) => patchProduct(p.id, { tone: v })} />

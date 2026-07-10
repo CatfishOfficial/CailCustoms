@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Frame from "./Frame";
 import ProductCard from "./ProductCard";
+import AddToCart from "./cart/AddToCart";
 import { madeToOrder, mailtoHref, slugify } from "@/lib/data";
 
 export default function ProductView({ data, product }) {
@@ -59,10 +60,11 @@ export default function ProductView({ data, product }) {
           <ul className="pdp-specs">
             <li><span>availability</span><b>{stock}</b></li>
             <li><span>ships from</span><b>{data.settings.location.toLowerCase()}</b></li>
-            <li><span>how to get it</span><b>reach out below</b></li>
+            <li><span>how to get it</span><b>add to cart below</b></li>
           </ul>
-          <a className="btn pdp-buy" href={mailtoHref(data.settings.email, product.name)}>inquire about this</a>
-          <p className="pdp-note">no cart — we'll confirm sizing, specs, and final price by email, then get it to you.</p>
+          <AddToCart product={product} />
+          <a className="pdp-alt" href={mailtoHref(data.settings.email, product.name)}>prefer email? ask us about this →</a>
+          <p className="pdp-note">add it to your cart and send an order request — we'll confirm sizing, specs, and final price by email, then get it to you.</p>
         </div>
       </div>
 

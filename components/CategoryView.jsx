@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ProductCard from "./ProductCard";
+import IdeaForm from "./IdeaForm";
 import { slugify, ALL_SLUG } from "@/lib/data";
 
 // `cat` is a category name, or "All" for the everything/all-products view.
@@ -35,6 +36,7 @@ export default function CategoryView({ data, cat }) {
       ) : (
         <p className="sec-note">nothing here yet — check back soon.</p>
       )}
+      <IdeaForm category={isAll ? "Everything" : cat} />
     </section>
   );
 }

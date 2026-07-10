@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { mailtoHref } from "@/lib/data";
+import CartButton from "@/components/cart/CartButton";
 
 export default function Nav({ settings }) {
   return (
@@ -12,7 +13,10 @@ export default function Nav({ settings }) {
         <Link href="/#about">about</Link>
         <Link href="/#contact">contact</Link>
       </nav>
-      <a className="pill" href={mailtoHref(settings.email, "inquiry")}>get in touch</a>
+      <div className="nav-right">
+        <CartButton />
+        <a className="pill" href={mailtoHref(settings.email, "inquiry")}>get in touch</a>
+      </div>
     </header>
   );
 }

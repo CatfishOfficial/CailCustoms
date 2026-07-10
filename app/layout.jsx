@@ -1,5 +1,7 @@
 import "./globals.css";
 import { getSiteData } from "@/lib/site";
+import { CartProvider } from "@/components/cart/CartContext";
+import CartDrawer from "@/components/cart/CartDrawer";
 import Nav from "@/components/Nav";
 import Ticker from "@/components/Ticker";
 import Footer from "@/components/Footer";
@@ -28,12 +30,15 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <div className="cc loaded">
-          <Nav settings={s} />
-          <Ticker text={s.ticker} />
-          <Stage>{children}</Stage>
-          <Footer settings={s} categories={data.categories} />
-        </div>
+        <CartProvider>
+          <div className="cc loaded">
+            <Nav settings={s} />
+            <Ticker text={s.ticker} />
+            <Stage>{children}</Stage>
+            <Footer settings={s} categories={data.categories} />
+            <CartDrawer />
+          </div>
+        </CartProvider>
       </body>
     </html>
   );

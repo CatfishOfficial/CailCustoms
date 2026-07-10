@@ -36,7 +36,8 @@ export default async function AdminPage() {
     categories: (catsRes.data || []).map((c) => ({ id: c.id, name: c.name, blurb: c.blurb, tone: c.tone, image: c.image })),
     products: (prodsRes.data || []).map((p) => ({
       id: p.id, name: p.name, cat: p.cat, price: p.price, tone: p.tone,
-      blurb: p.blurb, desc: p.description, images: Array.isArray(p.images) ? p.images : [], featured: !!p.featured,
+      blurb: p.blurb, desc: p.description, images: Array.isArray(p.images) ? p.images : [],
+      sizes: Array.isArray(p.sizes) ? p.sizes : [], featured: !!p.featured,
     })),
     heroSlides: (slidesRes.data || []).map((sl) => ({ id: sl.id, tone: sl.tone, label: sl.label, image: sl.image })),
   };
