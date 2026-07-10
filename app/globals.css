@@ -265,6 +265,8 @@ body{background:#F2EEE4;}
 .cc .adm-upload{display:inline-flex;align-items:center;justify-content:center;min-width:34px;}
 .adm-uploaderr{flex-basis:100%;}
 .admin-save.err{color:#b3401f;}
+.admin-save.busy{color:#C0392B;}
+.admin-save.ok{color:#3F7A44;}
 
 /* cart (new — nav button, slide-over drawer) */
 .nav-right{display:flex;align-items:center;gap:12px;}
@@ -433,6 +435,13 @@ body{background:#F2EEE4;}
 .pitchband-badge b{display:block;font-family:var(--display);font-size:clamp(34px,4.6vw,62px);line-height:1;letter-spacing:.01em;color:var(--ink);}
 .pb-rule{display:block;width:54%;height:3px;background:var(--ink);margin:12px auto 10px;}
 .pitchband-badge em{display:block;font-style:normal;font-family:var(--mono);font-weight:700;font-size:clamp(10px,1.1vw,13px);letter-spacing:.16em;text-transform:uppercase;color:var(--ink);white-space:nowrap;}
+@media(max-width:899px) and (min-width:641px){
+  .pitchband-inner{padding-right:250px;}
+  .pitchband-badge{right:18px;top:50%;transform:translateY(-50%) rotate(7deg);padding:16px 20px;}
+  .pitchband:hover .pitchband-badge{transform:translateY(-50%) rotate(4deg);}
+  .pitchband-badge b{font-size:30px;}
+  .pitchband-badge em{font-size:10px;letter-spacing:.12em;}
+}
 @media(max-width:640px){.pitchband-badge{position:static;width:max-content;margin:30px 0 0;transform:rotate(-3deg);}.pitchband:hover .pitchband-badge{transform:rotate(-3deg);}}
 
 /* admin hub (new — /admin landing chooser) */

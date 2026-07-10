@@ -202,7 +202,7 @@ export default function AdminClient({ initialData, userEmail }) {
     router.refresh();
   };
 
-  const saveLabel = saveError ? `save failed — ${saveError}` : saving ? "saving…" : "all changes saved";
+  const saveLabel = saveError ? `save failed — ${saveError}` : saving ? "saving" : "saved";
 
   return (
     <section className="admin">
@@ -212,7 +212,7 @@ export default function AdminClient({ initialData, userEmail }) {
           <h1 className="admin-title">Manage the shop</h1>
         </div>
         <div className="admin-actions">
-          <span className={`admin-save ${saveError ? "err" : ""}`}>{saveLabel}</span>
+          <span className={`admin-save ${saveError ? "err" : saving ? "busy" : "ok"}`}>{saveLabel}</span>
           <button className="adm-ghost" onClick={doSave} disabled={saving}>save now</button>
           <button className="adm-ghost" onClick={resetData}>reset to defaults</button>
           <Link className="adm-ghost" href="/admin/orders"><Inbox size={14} /> orders</Link>
