@@ -1,6 +1,6 @@
 import Link from "next/link";
 import ProductCard from "./ProductCard";
-import IdeaForm from "./IdeaForm";
+import IdeaCta from "./IdeaCta";
 import { slugify, ALL_SLUG } from "@/lib/data";
 
 // `cat` is a category name, or "All" for the everything/all-products view.
@@ -9,6 +9,8 @@ export default function CategoryView({ data, cat }) {
   const isAll = cat === "All";
   const list = isAll ? products : products.filter((p) => p.cat === cat);
   const meta = categories.find((c) => c.name === cat);
+  // The "all products" view pitches to the catch-all category.
+  const ideaCat = isAll ? categories.find((c) => c.name === "Everything") || categories[0] : meta;
   return (
     <section className="page">
       <Link className="crumb" href="/">← home</Link>
@@ -36,7 +38,7 @@ export default function CategoryView({ data, cat }) {
       ) : (
         <p className="sec-note">nothing here yet — check back soon.</p>
       )}
-      <IdeaForm category={isAll ? "Everything" : cat} />
+      {ideaCat && <IdeaCta category={ideaCat.name} />}
     </section>
   );
 }
