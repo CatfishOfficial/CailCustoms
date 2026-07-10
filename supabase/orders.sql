@@ -24,6 +24,19 @@ update public.products
   where id in ('static-tee', 'hoodie') and sizes = '[]'::jsonb;
 
 -- ---------------------------------------------------------------------------
+-- COPY REFRESH — Mat. Stuff leans electronics now. Only touches rows still
+-- carrying the original seeded copy; anything you've edited in the admin
+-- stays as-is.
+-- ---------------------------------------------------------------------------
+update public.categories
+  set blurb = 'electronics, light, and gadgets that actually exist.'
+  where name = 'Mat. Stuff' and blurb = 'physical builds and objects that actually exist.';
+
+update public.settings
+  set hero_sub = 'a small crew making a lot of different things — shirts, circuits, sound, design. pick a lane below and have a look around.'
+  where id = 1 and hero_sub = 'a small crew making a lot of different things — shirts, builds, sound, design. pick a lane below and have a look around.';
+
+-- ---------------------------------------------------------------------------
 -- ORDERS — cart order requests
 -- ---------------------------------------------------------------------------
 create table if not exists public.orders (

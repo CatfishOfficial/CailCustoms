@@ -14,10 +14,10 @@ export const metadata = {
     template: "%s · Cail Customs",
   },
   description:
-    "a small crew making a lot of different things — shirts, builds, sound, design. contact-to-buy, made in Lubbock, TX.",
+    "a small crew making a lot of different things — shirts, circuits, sound, design. contact-to-buy, made in Lubbock, TX.",
   openGraph: {
     title: "Cail Customs — make cool stuff.",
-    description: "shirts, builds, sound, design. made in Lubbock, TX.",
+    description: "shirts, circuits, sound, design. made in Lubbock, TX.",
     type: "website",
   },
 };
