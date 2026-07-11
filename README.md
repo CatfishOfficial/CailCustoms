@@ -41,6 +41,12 @@ Without Supabase configured the storefront still renders using the built-in
    - `schema.sql` creates the tables, row-level security (public read /
      authenticated write), and the public **`media`** storage bucket.
    - `seed.sql` loads the prototype's default content so the site isn't empty.
+   - Then run the rest, in order: **`orders.sql`**, **`accounts.sql`**, and the
+     numbered files in **`supabase/migrations/`** (`002`…`005`). These add the
+     cart/orders + custom-idea system, user accounts, sub-categories, editable
+     specs, admin/customer separation (**`004`** — edit its admin-email list
+     first), and availability + inventory (**`005`**). All additive and safe to
+     re-run.
 3. **Project Settings → API**: copy the Project URL and the `anon` public key
    into `.env.local` (see `.env.local.example`).
 4. **Auth → Providers → Email**: keep Email on and turn **off** "Allow new

@@ -6,9 +6,9 @@ import { useCart } from "./CartContext";
 
 // The buy CTA. Unsized products go straight into the cart; sized products get
 // a quick size-confirm dialog first. Opening the drawer is the "added" feedback.
-export default function AddToCart({ product }) {
+export default function AddToCart({ product, sizes: sizesProp }) {
   const { addItem, openCart } = useCart();
-  const sizes = (product.sizes || []).filter(Boolean);
+  const sizes = (sizesProp || product.sizes || []).filter(Boolean);
   const [modal, setModal] = useState(false);
   const [size, setSize] = useState("");
   const dialogRef = useRef(null);

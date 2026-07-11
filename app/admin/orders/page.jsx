@@ -13,9 +13,10 @@ export default async function AdminOrdersPage() {
   if (!user) redirect("/admin/login");
   if (!(await checkIsAdmin(supabase))) redirect("/account");
 
-  const [ordersRes, ideasRes] = await Promise.all([
+  const [ordersRes, ideasRes, requestsRes] = await Promise.all([
     supabase.from("orders").select("*").order("created_at", { ascending: false }),
     supabase.from("idea_submissions").select("*").order("created_at", { ascending: false }),
+    supabase.from("restock_requests").select("*").order("created_at", { ascending: false }),
   ]);
 
   // Idea files live in the private "submissions" bucket — sign URLs here (1h)
@@ -34,5 +35,5 @@ export default async function AdminOrdersPage() {
     files: (Array.isArray(i.files) ? i.files : []).map((path) => ({ path, url: signed[path] || "" })),
   }));
 
-  return <OrdersClient initialOrders={ordersRes.data || []} initialIdeas={ideasWithFiles} userEmail={user.email} />;
+  return <OrdersClient initialOrders={ordersRes.data || []} initialIdeas={ideasWithFiles} initialRequests={requestsRes.data || []} userEmail={user.email} />;
 }

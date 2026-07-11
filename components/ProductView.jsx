@@ -5,7 +5,8 @@ import Link from "next/link";
 import Frame from "./Frame";
 import ProductCard from "./ProductCard";
 import AddToCart from "./cart/AddToCart";
-import { mailtoHref, slugify, specsFor } from "@/lib/data";
+import NotifyForm from "./NotifyForm";
+import { mailtoHref, slugify, specsFor, isAvailable, isTracked, offeredSizes } from "@/lib/data";
 
 export default function ProductView({ data, product }) {
   const { products } = data;
@@ -18,6 +19,15 @@ export default function ProductView({ data, product }) {
   const cur = Math.min(active, gallery.length - 1);
   const related = products.filter((p) => p.cat === product.cat && p.id !== product.id).slice(0, 3);
   const specs = specsFor(product);
+  const available = isAvailable(product);
+  const sizes = offeredSizes(product);
+  const tracked = isTracked(product);
+  const stockNote = tracked
+    ? (product.stock || [])
+        .filter((s) => s.qty > 0)
+        .map((s) => (s.size ? `${s.size} (${s.qty})` : `${s.qty} in stock`))
+        .join(" · ")
+    : "";
 
   return (
     <section className="page">
@@ -64,9 +74,18 @@ export default function ProductView({ data, product }) {
               ))}
             </ul>
           )}
-          <AddToCart product={product} />
-          <a className="pdp-alt" href={mailtoHref(data.settings.email, product.name)}>prefer email? ask us about this →</a>
-          <p className="pdp-note">add it to your cart and send an order request — we'll confirm sizing, specs, and final price by email, then get it to you.</p>
+          {available && tracked && stockNote && (
+            <p className="pdp-stock">in stock: {stockNote}</p>
+          )}
+          {available ? (
+            <>
+              <AddToCart product={product} sizes={sizes} />
+              <a className="pdp-alt" href={mailtoHref(data.settings.email, product.name)}>prefer email? ask us about this →</a>
+              <p className="pdp-note">add it to your cart and send an order request — we'll confirm sizing, specs, and final price by email, then get it to you.</p>
+            </>
+          ) : (
+            <NotifyForm product={product} />
+          )}
         </div>
       </div>
 

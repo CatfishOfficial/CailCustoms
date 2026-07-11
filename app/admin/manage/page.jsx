@@ -16,12 +16,18 @@ export default async function AdminPage() {
   if (!user) redirect("/admin/login");
   if (!(await checkIsAdmin(supabase))) redirect("/account");
 
-  const [settingsRes, catsRes, prodsRes, slidesRes] = await Promise.all([
+  const [settingsRes, catsRes, prodsRes, slidesRes, stockRes] = await Promise.all([
     supabase.from("settings").select("*").eq("id", 1).maybeSingle(),
     supabase.from("categories").select("*").order("position", { ascending: true }),
     supabase.from("products").select("*").order("position", { ascending: true }),
     supabase.from("hero_slides").select("*").order("position", { ascending: true }),
+    supabase.from("product_stock").select("product_id, size, qty"),
   ]);
+
+  const stockByProduct = {};
+  for (const r of stockRes.data || []) {
+    (stockByProduct[r.product_id] ||= []).push({ size: r.size || "", qty: r.qty });
+  }
 
   const row = settingsRes.data;
   const settings = row
@@ -43,6 +49,7 @@ export default async function AdminPage() {
       id: p.id, name: p.name, cat: p.cat, price: p.price, tone: p.tone,
       blurb: p.blurb, desc: p.description, images: Array.isArray(p.images) ? p.images : [],
       sizes: Array.isArray(p.sizes) ? p.sizes : [], specs: Array.isArray(p.specs) ? p.specs : [], featured: !!p.featured,
+      available: p.available !== false, stock: stockByProduct[p.id] || [],
     })),
     heroSlides: (slidesRes.data || []).map((sl) => ({ id: sl.id, tone: sl.tone, label: sl.label, image: sl.image })),
   };

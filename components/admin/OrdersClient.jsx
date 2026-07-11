@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Paperclip, Wrench } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { telHref } from "@/lib/data";
-import { ORDER_STATUSES, IDEA_STATUSES, composeOrderText } from "@/lib/orders";
+import { ORDER_STATUSES, IDEA_STATUSES, REQUEST_STATUSES, composeOrderText } from "@/lib/orders";
 
 const fmtWhen = (iso) =>
   new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).toLowerCase();
@@ -41,9 +41,10 @@ function Contact({ name, email, phone, contacts }) {
   );
 }
 
-export default function OrdersClient({ initialOrders, initialIdeas, userEmail }) {
+export default function OrdersClient({ initialOrders, initialIdeas, initialRequests, userEmail }) {
   const [orders, setOrders] = useState(initialOrders);
   const [ideas, setIdeas] = useState(initialIdeas);
+  const [requests, setRequests] = useState(initialRequests || []);
   const [tab, setTab] = useState("orders");
   const [filter, setFilter] = useState("all");
   const [err, setErr] = useState("");
@@ -51,8 +52,8 @@ export default function OrdersClient({ initialOrders, initialIdeas, userEmail })
   const patchStatus = (setList) => (id, status) =>
     setList((list) => list.map((r) => (r.id === id ? { ...r, status } : r)));
 
-  const list = tab === "orders" ? orders : ideas;
-  const statuses = tab === "orders" ? ORDER_STATUSES : IDEA_STATUSES;
+  const list = tab === "orders" ? orders : tab === "ideas" ? ideas : requests;
+  const statuses = tab === "orders" ? ORDER_STATUSES : tab === "ideas" ? IDEA_STATUSES : REQUEST_STATUSES;
   const shown = filter === "all" ? list : list.filter((r) => r.status === filter);
   const newCount = (rows) => rows.filter((r) => r.status === "new").length;
 
@@ -75,6 +76,9 @@ export default function OrdersClient({ initialOrders, initialIdeas, userEmail })
         </button>
         <button className={`chip ${tab === "ideas" ? "on" : ""}`} onClick={() => { setTab("ideas"); setFilter("all"); }}>
           custom ideas{newCount(ideas) > 0 ? ` (${newCount(ideas)} new)` : ""}
+        </button>
+        <button className={`chip ${tab === "requests" ? "on" : ""}`} onClick={() => { setTab("requests"); setFilter("all"); }}>
+          restock requests{newCount(requests) > 0 ? ` (${newCount(requests)} new)` : ""}
         </button>
       </div>
 
@@ -107,7 +111,7 @@ export default function OrdersClient({ initialOrders, initialIdeas, userEmail })
                 <pre className="ord-items">{composeOrderText(r.items)}</pre>
                 {r.message && <p className="ord-msg">“{r.message}”</p>}
               </article>
-            ) : (
+            ) : tab === "ideas" ? (
               <article className="ord-card" key={r.id}>
                 <div className="ord-head">
                   <span className="ord-when">{fmtWhen(r.created_at)} · <b>{(r.category || "?").toLowerCase()}</b></span>
@@ -131,6 +135,16 @@ export default function OrdersClient({ initialOrders, initialIdeas, userEmail })
                     ))}
                   </div>
                 )}
+              </article>
+            ) : (
+              <article className="ord-card" key={r.id}>
+                <div className="ord-head">
+                  <span className="ord-when">{fmtWhen(r.created_at)}</span>
+                  <StatusSelect table="restock_requests" row={r} statuses={REQUEST_STATUSES} onChange={patchStatus(setRequests)} onError={setErr} />
+                </div>
+                <Contact name={r.name} email={r.email} phone={r.phone} />
+                <p className="ord-req">wants <b>{r.product_name || "an item"}</b>{r.size ? ` · size ${r.size}` : ""}{r.qty ? ` · qty ${r.qty}` : ""}</p>
+                {r.message && <p className="ord-msg">“{r.message}”</p>}
               </article>
             )
           )}

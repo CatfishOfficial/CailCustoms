@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Plus, Trash2, ArrowLeft, LogOut, Lock, Inbox } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { DEFAULT_DATA, uid, LAYOUTS, topLevel } from "@/lib/data";
+import { DEFAULT_DATA, uid, LAYOUTS, topLevel, isTracked, offeredSizes } from "@/lib/data";
 import Frame from "@/components/Frame";
 import Field from "./Field";
 import ToneField from "./ToneField";
 import ImageInput from "./ImageInput";
 import SizesInput from "./SizesInput";
 import AdminsManager from "./AdminsManager";
+import InventoryManager from "./InventoryManager";
 
 const newId = () =>
   typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : uid();
@@ -66,7 +67,7 @@ async function flush(data) {
   const prods = data.products.map((p, i) => ({
     id: p.id, name: p.name, cat: p.cat, price: p.price, tone: p.tone,
     blurb: p.blurb, description: p.desc, images: p.images, sizes: p.sizes || [],
-    specs: p.specs || [], featured: p.featured, position: i,
+    specs: p.specs || [], featured: p.featured, position: i, available: p.available !== false,
   }));
   if (prods.length) {
     const { error } = await supabase.from("products").upsert(prods);
@@ -150,7 +151,7 @@ export default function AdminClient({ initialData, userEmail }) {
     setData((d) => ({
       ...d,
       products: [
-        { id: uid(), name: "New listing", cat: d.categories[0]?.name || "Everything", price: "$0", tone: "t2", blurb: "", desc: "", images: [], sizes: [], specs: [], featured: false },
+        { id: uid(), name: "New listing", cat: d.categories[0]?.name || "Everything", price: "$0", tone: "t2", blurb: "", desc: "", images: [], sizes: [], specs: [], featured: false, available: true, stock: [] },
         ...d.products,
       ],
     }));
@@ -253,7 +254,7 @@ export default function AdminClient({ initialData, userEmail }) {
       )}
 
       <div className="admin-tabs">
-        {["products", "categories", "hero", "site", "staff"].map((t) => (
+        {["products", "categories", "inventory", "hero", "site", "staff"].map((t) => (
           <button key={t} className={`chip ${tab === t ? "on" : ""}`} onClick={() => setTab(t)}>{t}</button>
         ))}
       </div>
@@ -275,7 +276,14 @@ export default function AdminClient({ initialData, userEmail }) {
                   </label>
                   <Field label="price" value={p.price} onChange={(v) => patchProduct(p.id, { price: v })} ph="$28 / from $80 / let's talk" />
                 </div>
-                <SizesInput value={p.sizes} onChange={(v) => patchProduct(p.id, { sizes: v })} />
+                {isTracked(p) ? (
+                  <div className="adm-field">
+                    <span>sizes — from inventory (edit stock in the inventory tab)</span>
+                    <p className="adm-sizes-note">{offeredSizes(p).length ? offeredSizes(p).join(", ") : "no sizes in stock"}</p>
+                  </div>
+                ) : (
+                  <SizesInput value={p.sizes} onChange={(v) => patchProduct(p.id, { sizes: v })} />
+                )}
                 <Field label="short blurb (shown on cards)" value={p.blurb} onChange={(v) => patchProduct(p.id, { blurb: v })} />
                 <Field label="description (product page)" value={p.desc} onChange={(v) => patchProduct(p.id, { desc: v })} area />
                 <div className="adm-field">
@@ -301,7 +309,10 @@ export default function AdminClient({ initialData, userEmail }) {
                   <button className="adm-add" onClick={() => addImage(p.id)}><Plus size={14} /> add image</button>
                 </div>
                 <div className="adm-item-foot">
-                  <label className="adm-check"><input type="checkbox" checked={!!p.featured} onChange={(e) => patchProduct(p.id, { featured: e.target.checked })} /> featured on home</label>
+                  <div className="adm-foot-checks">
+                    <label className="adm-check"><input type="checkbox" checked={!!p.featured} onChange={(e) => patchProduct(p.id, { featured: e.target.checked })} /> featured on home</label>
+                    <label className="adm-check"><input type="checkbox" checked={p.available !== false} onChange={(e) => patchProduct(p.id, { available: e.target.checked })} /> available {isTracked(p) ? "(auto-off at 0 stock)" : "(uncheck → notify-me)"}</label>
+                  </div>
                   <button className="adm-del" onClick={() => removeProduct(p.id)}><Trash2 size={14} /> delete</button>
                 </div>
               </div>
@@ -413,6 +424,8 @@ export default function AdminClient({ initialData, userEmail }) {
           <Field label="marquee text (separate with · )" value={s.marquee} onChange={(v) => patchSettings({ marquee: v })} area />
         </div>
       )}
+
+      {tab === "inventory" && <InventoryManager products={data.products} />}
 
       {tab === "staff" && <AdminsManager />}
     </section>
