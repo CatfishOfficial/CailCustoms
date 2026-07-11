@@ -1,7 +1,8 @@
 import Link from "next/link";
 import ProductCard from "./ProductCard";
 import IdeaCta from "./IdeaCta";
-import { slugify, ALL_SLUG } from "@/lib/data";
+import Frame from "./Frame";
+import { slugify, ALL_SLUG, topLevel, childrenOf, countIn } from "@/lib/data";
 
 // `cat` is a category name, or "All" for the everything/all-products view.
 export default function CategoryView({ data, cat }) {
@@ -11,6 +12,11 @@ export default function CategoryView({ data, cat }) {
   const meta = categories.find((c) => c.name === cat);
   // The "all products" view pitches to the catch-all category.
   const ideaCat = isAll ? categories.find((c) => c.name === "Everything") || categories[0] : meta;
+  const subs = meta ? childrenOf(categories, meta.id) : [];
+  const isApparel = meta?.layout === "apparel";
+  const showItemBox = !!meta?.isItem;
+  const hasItems = list.length > 0 || showItemBox;
+
   return (
     <section className="page">
       <Link className="crumb" href="/">← home</Link>
@@ -19,8 +25,9 @@ export default function CategoryView({ data, cat }) {
         <h2 className="cat-title">{cat}</h2>
         {meta && <p className="sec-note">{meta.blurb}</p>}
       </div>
+
       <div className="chips">
-        {categories.map((c) => (
+        {topLevel(categories).map((c) => (
           <Link key={c.name} className={`chip ${c.name === cat ? "on" : ""}`} href={`/shop/${slugify(c.name)}`}>
             {c.name.toLowerCase()}
           </Link>
@@ -29,15 +36,51 @@ export default function CategoryView({ data, cat }) {
           everything
         </Link>
       </div>
-      {list.length > 0 ? (
+
+      {subs.length > 0 && (
+        <div className="subcats">
+          {subs.map((sc) => {
+            const n = countIn(products, sc.name);
+            return (
+              <Link key={sc.id} className="catcard subcatcard" href={`/shop/${slugify(sc.name)}`}>
+                <div className="catcard-media">
+                  <Frame tone={sc.tone} image={sc.image} />
+                  <span className="catcard-count">{n} {n === 1 ? "thing" : "things"}</span>
+                  <div className="catcard-overlay">
+                    <span className="catcard-name">{sc.name}</span>
+                    <span className="catcard-go">browse →</span>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      )}
+
+      {subs.length > 0 && hasItems && <div className="subcat-divider" aria-hidden="true" />}
+
+      {hasItems ? (
         <div className="grid">
           {list.map((p, i) => (
-            <ProductCard key={p.id} p={p} i={i} />
+            <ProductCard key={p.id} p={p} i={i} showSizes={isApparel} />
           ))}
+          {showItemBox && meta && (
+            <Link className="card grididea-card" href={`/ideas/${slugify(meta.name)}`}>
+              <div className="card-media">
+                <Frame tone={meta.tone || "t4"} />
+                <span className="grididea-plus" aria-hidden="true">✶</span>
+              </div>
+              <div className="card-body">
+                <span className="card-name">got an idea?</span>
+                <span className="card-price">pitch it →</span>
+              </div>
+            </Link>
+          )}
         </div>
       ) : (
         <p className="sec-note">nothing here yet — check back soon.</p>
       )}
+
       {ideaCat && <IdeaCta category={ideaCat.name} />}
     </section>
   );

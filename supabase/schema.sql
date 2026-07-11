@@ -65,6 +65,18 @@ create index if not exists products_position_idx on public.products (position);
 create index if not exists products_cat_idx on public.products (cat);
 
 -- ---------------------------------------------------------------------------
+-- ADDITIVE COLUMNS (safe to re-run) — sub-categories, per-category layout
+-- tags, the "got an idea?" grid box, and editable product spec rows.
+-- (products.sizes is added in orders.sql.)
+-- ---------------------------------------------------------------------------
+alter table public.categories add column if not exists parent_id uuid references public.categories(id) on delete set null;
+alter table public.categories add column if not exists layout text not null default 'standard';
+alter table public.categories add column if not exists is_item boolean not null default false;
+create index if not exists categories_parent_idx on public.categories (parent_id);
+
+alter table public.products add column if not exists specs jsonb not null default '[]'::jsonb;
+
+-- ---------------------------------------------------------------------------
 -- HERO SLIDES
 -- ---------------------------------------------------------------------------
 create table if not exists public.hero_slides (

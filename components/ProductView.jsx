@@ -5,7 +5,7 @@ import Link from "next/link";
 import Frame from "./Frame";
 import ProductCard from "./ProductCard";
 import AddToCart from "./cart/AddToCart";
-import { madeToOrder, mailtoHref, slugify } from "@/lib/data";
+import { mailtoHref, slugify, specsFor } from "@/lib/data";
 
 export default function ProductView({ data, product }) {
   const { products } = data;
@@ -17,7 +17,7 @@ export default function ProductView({ data, product }) {
   const [active, setActive] = useState(0);
   const cur = Math.min(active, gallery.length - 1);
   const related = products.filter((p) => p.cat === product.cat && p.id !== product.id).slice(0, 3);
-  const stock = madeToOrder(product.price) ? "made to order" : "in stock · ships in ~3 days";
+  const specs = specsFor(data.settings, product);
 
   return (
     <section className="page">
@@ -58,9 +58,9 @@ export default function ProductView({ data, product }) {
           <div className="pdp-price">{product.price}</div>
           <p className="pdp-desc">{product.desc}</p>
           <ul className="pdp-specs">
-            <li><span>availability</span><b>{stock}</b></li>
-            <li><span>ships from</span><b>{data.settings.location.toLowerCase()}</b></li>
-            <li><span>how to get it</span><b>add to cart below</b></li>
+            {specs.map((row, i) => (
+              <li key={i}><span>{row.label}</span><b>{row.value}</b></li>
+            ))}
           </ul>
           <AddToCart product={product} />
           <a className="pdp-alt" href={mailtoHref(data.settings.email, product.name)}>prefer email? ask us about this →</a>

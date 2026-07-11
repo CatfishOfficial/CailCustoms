@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Plus, Trash2, ArrowLeft, LogOut, Lock, Inbox } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { DEFAULT_DATA, uid } from "@/lib/data";
+import { DEFAULT_DATA, uid, LAYOUTS, topLevel, defaultSpecs } from "@/lib/data";
 import Frame from "@/components/Frame";
 import Field from "./Field";
 import ToneField from "./ToneField";
 import ImageInput from "./ImageInput";
+import SizesInput from "./SizesInput";
 
 const newId = () =>
   typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : uid();
@@ -53,6 +54,7 @@ async function flush(data) {
 
   const cats = data.categories.map((c, i) => ({
     id: c.id, name: c.name, blurb: c.blurb, tone: c.tone, image: c.image, position: i,
+    parent_id: c.parentId || null, layout: c.layout || "standard", is_item: !!c.isItem,
   }));
   if (cats.length) {
     const { error } = await supabase.from("categories").upsert(cats);
@@ -63,7 +65,7 @@ async function flush(data) {
   const prods = data.products.map((p, i) => ({
     id: p.id, name: p.name, cat: p.cat, price: p.price, tone: p.tone,
     blurb: p.blurb, description: p.desc, images: p.images, sizes: p.sizes || [],
-    featured: p.featured, position: i,
+    specs: p.specs || [], featured: p.featured, position: i,
   }));
   if (prods.length) {
     const { error } = await supabase.from("products").upsert(prods);
@@ -147,7 +149,7 @@ export default function AdminClient({ initialData, userEmail }) {
     setData((d) => ({
       ...d,
       products: [
-        { id: uid(), name: "New listing", cat: d.categories[0]?.name || "Everything", price: "$0", tone: "t2", blurb: "", desc: "", images: [], sizes: [], featured: false },
+        { id: uid(), name: "New listing", cat: d.categories[0]?.name || "Everything", price: "$0", tone: "t2", blurb: "", desc: "", images: [], sizes: [], specs: defaultSpecs(d.settings, { price: "$0" }), featured: false },
         ...d.products,
       ],
     }));
@@ -167,6 +169,21 @@ export default function AdminClient({ initialData, userEmail }) {
   const removeImage = (id, ix) =>
     setData((d) => ({ ...d, products: d.products.map((p) => (p.id === id ? { ...p, images: (p.images || []).filter((_, j) => j !== ix) } : p)) }));
 
+  const addSpec = (id) =>
+    setData((d) => ({ ...d, products: d.products.map((p) => (p.id === id ? { ...p, specs: [...(p.specs || []), { label: "", value: "" }] } : p)) }));
+  const setSpec = (id, ix, patch) =>
+    setData((d) => ({
+      ...d,
+      products: d.products.map((p) => {
+        if (p.id !== id) return p;
+        const sp = [...(p.specs || [])];
+        sp[ix] = { ...sp[ix], ...patch };
+        return { ...p, specs: sp };
+      }),
+    }));
+  const removeSpec = (id, ix) =>
+    setData((d) => ({ ...d, products: d.products.map((p) => (p.id === id ? { ...p, specs: (p.specs || []).filter((_, j) => j !== ix) } : p)) }));
+
   const patchCat = (id, patch) => setData((d) => ({ ...d, categories: d.categories.map((c) => (c.id === id ? { ...c, ...patch } : c)) }));
   const renameCat = (id, name) =>
     setData((d) => {
@@ -178,8 +195,15 @@ export default function AdminClient({ initialData, userEmail }) {
       };
     });
   const addCat = () =>
-    setData((d) => ({ ...d, categories: [...d.categories, { id: newId(), name: "New category", blurb: "", tone: "t2", image: "" }] }));
-  const removeCat = (id) => setData((d) => ({ ...d, categories: d.categories.filter((c) => c.id !== id) }));
+    setData((d) => ({ ...d, categories: [...d.categories, { id: newId(), name: "New category", blurb: "", tone: "t2", image: "", parentId: null, layout: "standard", isItem: false }] }));
+  // Removing a category also detaches any sub-categories that pointed at it.
+  const removeCat = (id) =>
+    setData((d) => ({
+      ...d,
+      categories: d.categories
+        .filter((c) => c.id !== id)
+        .map((c) => (c.parentId === id ? { ...c, parentId: null } : c)),
+    }));
 
   const patchSlide = (id, patch) => setData((d) => ({ ...d, heroSlides: d.heroSlides.map((sl) => (sl.id === id ? { ...sl, ...patch } : sl)) }));
   const addSlide = () => setData((d) => ({ ...d, heroSlides: [...d.heroSlides, { id: newId(), tone: "t2", label: "new shot", image: "" }] }));
@@ -190,7 +214,7 @@ export default function AdminClient({ initialData, userEmail }) {
     setData({
       settings: { ...DEFAULT_DATA.settings },
       categories: DEFAULT_DATA.categories.map((c) => ({ ...c, id: newId() })),
-      products: DEFAULT_DATA.products.map((p) => ({ ...p, images: [...p.images] })),
+      products: DEFAULT_DATA.products.map((p) => ({ ...p, images: [...p.images], sizes: [...(p.sizes || [])], specs: [...(p.specs || [])] })),
       heroSlides: DEFAULT_DATA.heroSlides.map((sl) => ({ ...sl, id: newId() })),
     });
   };
@@ -250,14 +274,20 @@ export default function AdminClient({ initialData, userEmail }) {
                   </label>
                   <Field label="price" value={p.price} onChange={(v) => patchProduct(p.id, { price: v })} ph="$28 / from $80 / let's talk" />
                 </div>
-                <Field
-                  label="sizes (comma-separated · blank = one size)"
-                  value={(p.sizes || []).join(", ")}
-                  onChange={(v) => patchProduct(p.id, { sizes: v.split(",").map((x) => x.trim()).filter(Boolean) })}
-                  ph="S, M, L, XL"
-                />
+                <SizesInput value={p.sizes} onChange={(v) => patchProduct(p.id, { sizes: v })} />
                 <Field label="short blurb (shown on cards)" value={p.blurb} onChange={(v) => patchProduct(p.id, { blurb: v })} />
                 <Field label="description (product page)" value={p.desc} onChange={(v) => patchProduct(p.id, { desc: v })} area />
+                <div className="adm-field">
+                  <span>details (shown on the product page — add/edit/remove any line)</span>
+                  {(p.specs || []).map((row, ix) => (
+                    <div className="adm-specrow" key={ix}>
+                      <input className="adm-input" value={row.label} placeholder="label (e.g. ships from)" onChange={(e) => setSpec(p.id, ix, { label: e.target.value })} />
+                      <input className="adm-input" value={row.value} placeholder="value (e.g. lubbock, tx)" onChange={(e) => setSpec(p.id, ix, { value: e.target.value })} />
+                      <button className="adm-mini" onClick={() => removeSpec(p.id, ix)} aria-label="remove detail"><Trash2 size={14} /></button>
+                    </div>
+                  ))}
+                  <button className="adm-add" onClick={() => addSpec(p.id)}><Plus size={14} /> add detail line</button>
+                </div>
                 <ToneField value={p.tone} onChange={(v) => patchProduct(p.id, { tone: v })} />
                 <div className="adm-field">
                   <span>images — first one is the cover · paste a url or upload</span>
@@ -282,12 +312,40 @@ export default function AdminClient({ initialData, userEmail }) {
       {tab === "categories" && (
         <div className="adm-section">
           <button className="adm-add-big" onClick={addCat}><Plus size={16} /> new category</button>
-          {data.categories.map((c) => (
+          {data.categories.map((c) => {
+            const hasKids = data.categories.some((x) => x.parentId === c.id);
+            return (
             <div className="adm-item" key={c.id}>
               <div className="adm-item-preview"><Frame tone={c.tone} image={c.image} /></div>
               <div className="adm-item-fields">
                 <Field label="name (renaming re-tags its products)" value={c.name} onChange={(v) => renameCat(c.id, v)} />
                 <Field label="blurb" value={c.blurb} onChange={(v) => patchCat(c.id, { blurb: v })} />
+                <div className="adm-row2">
+                  <label className="adm-field">
+                    <span>parent {hasKids ? "(has sub-categories — can't nest)" : "(makes this a sub-category)"}</span>
+                    <select
+                      className="adm-select"
+                      value={c.parentId || ""}
+                      disabled={hasKids}
+                      onChange={(e) => patchCat(c.id, { parentId: e.target.value || null })}
+                    >
+                      <option value="">— none (top level)</option>
+                      {topLevel(data.categories).filter((t) => t.id !== c.id).map((t) => (
+                        <option key={t.id} value={t.id}>{t.name}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="adm-field">
+                    <span>page layout</span>
+                    <select className="adm-select" value={c.layout || "standard"} onChange={(e) => patchCat(c.id, { layout: e.target.value })}>
+                      {LAYOUTS.map((l) => <option key={l} value={l}>{l}</option>)}
+                    </select>
+                  </label>
+                </div>
+                <label className="adm-check">
+                  <input type="checkbox" checked={!!c.isItem} onChange={(e) => patchCat(c.id, { isItem: e.target.checked })} />
+                  show a &ldquo;got an idea?&rdquo; box in this page&rsquo;s grid (ITEM)
+                </label>
                 <ToneField value={c.tone} onChange={(v) => patchCat(c.id, { tone: v })} />
                 <div className="adm-field">
                   <span>image · paste a url or upload</span>
@@ -301,7 +359,8 @@ export default function AdminClient({ initialData, userEmail }) {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
