@@ -265,3 +265,34 @@ body{background:#F2EEE4;}
 .cc .adm-upload{display:inline-flex;align-items:center;justify-content:center;min-width:34px;}
 .adm-uploaderr{flex-basis:100%;}
 .admin-save.err{color:#b3401f;}
+
+/* sub-categories, item box, sizes, editable specs (new) */
+.subcats{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(14px,2vw,22px);margin-bottom:6px;}
+.subcatcard .catcard-name{font-size:clamp(16px,1.6vw,22px);}
+.subcat-divider{height:1px;background:var(--line);margin:22px 0 26px;}
+
+/* "give us your idea" box — a product-card-shaped call to action */
+.idea-card .card-media{border-style:dashed;border-color:var(--muted);}
+.idea-card:hover .card-media{border-color:var(--ink);}
+.idea-plus{position:absolute;z-index:6;inset:0;display:grid;place-items:center;font-family:var(--display);font-size:72px;line-height:1;color:#fff;opacity:.9;pointer-events:none;}
+
+/* apparel size hint on cards */
+.card-sizes{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:0 2px 2px;}
+
+/* selectable size chips on the product page */
+.pdp-sizes{margin-bottom:22px;}
+.pdp-sizes-label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:9px;}
+.size-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.cc .size-chip{min-width:46px;text-align:center;font-family:var(--mono);font-size:13px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:4px;padding:9px 13px;transition:all .15s;}
+.cc .size-chip:hover{border-color:var(--ink);transform:translateY(-1px);}
+.cc .size-chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+
+/* admin: editable spec (detail) rows */
+.adm-specrow{display:flex;gap:8px;align-items:center;margin-bottom:6px;}
+.adm-specrow .adm-input{min-width:0;}
+.adm-specrow .adm-input:nth-child(1){flex:0 0 38%;}
+.adm-specrow .adm-input:nth-child(2){flex:1;}
+
+@media (max-width:720px){
+  .subcats{grid-template-columns:repeat(2,1fr);}
+}

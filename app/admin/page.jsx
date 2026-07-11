@@ -28,15 +28,20 @@ export default async function AdminPage() {
         heroLines: Array.isArray(row.hero_lines) ? row.hero_lines : DEFAULT_DATA.settings.heroLines,
         heroSub: row.hero_sub, statement: row.statement, about: row.about, bigmark: row.bigmark,
         ticker: row.ticker, marquee: row.marquee, instagram: row.instagram, youtube: row.youtube,
+        ideaLink: row.idea_link || "",
       }
     : { ...DEFAULT_DATA.settings };
 
   const initialData = {
     settings,
-    categories: (catsRes.data || []).map((c) => ({ id: c.id, name: c.name, blurb: c.blurb, tone: c.tone, image: c.image })),
+    categories: (catsRes.data || []).map((c) => ({
+      id: c.id, name: c.name, blurb: c.blurb, tone: c.tone, image: c.image,
+      parentId: c.parent_id || null, layout: c.layout || "standard", isItem: !!c.is_item,
+    })),
     products: (prodsRes.data || []).map((p) => ({
       id: p.id, name: p.name, cat: p.cat, price: p.price, tone: p.tone,
       blurb: p.blurb, desc: p.description, images: Array.isArray(p.images) ? p.images : [], featured: !!p.featured,
+      sizes: Array.isArray(p.sizes) ? p.sizes : [], specs: Array.isArray(p.specs) ? p.specs : [],
     })),
     heroSlides: (slidesRes.data || []).map((sl) => ({ id: sl.id, tone: sl.tone, label: sl.label, image: sl.image })),
   };

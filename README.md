@@ -1,9 +1,8 @@
 # Cail Customs
 
 Contact-to-buy showcase storefront for Cail Customs (Lubbock, TX) with a
-team admin. Built from the approved `CailCustoms.jsx` prototype — the design,
-copy, motion, and logo are preserved exactly; only the plumbing underneath
-changed.
+team admin — the design, copy, motion, and logo are preserved from the
+original approved prototype; the plumbing underneath is Next.js + Supabase.
 
 - **Next.js (App Router)** — real, shareable URLs + SSR for link previews.
 - **Supabase** — Postgres content, Auth for the admin, Storage for images.
@@ -41,6 +40,10 @@ Without Supabase configured the storefront still renders using the built-in
    - `schema.sql` creates the tables, row-level security (public read /
      authenticated write), and the public **`media`** storage bucket.
    - `seed.sql` loads the prototype's default content so the site isn't empty.
+   - **Already have an older database?** Run the incremental migrations in
+     **`supabase/migrations/`** (e.g. `002_categories_specs_sizes.sql`) to add
+     newer columns — sub-categories, layout tags, product sizes, editable
+     specs, and the shared "give us your idea" link. They're safe to re-run.
 3. **Project Settings → API**: copy the Project URL and the `anon` public key
    into `.env.local` (see `.env.local.example`).
 4. **Auth → Providers → Email**: keep Email on and turn **off** "Allow new
@@ -104,7 +107,7 @@ lib/
   site.js               getSiteData() — server read/assemble
   supabase/             browser + server clients
 middleware.js           refreshes the auth session; guards /admin
-supabase/               schema.sql + seed.sql
+supabase/               schema.sql + seed.sql + migrations/
 public/                 logo-mark.png, logo-full.png (decoded from the prototype)
 ```
 

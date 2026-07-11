@@ -6,7 +6,7 @@ import Frame from "./Frame";
 import HeroSlides from "./HeroSlides";
 import Marquee from "./Marquee";
 import ProductCard from "./ProductCard";
-import { countIn, iconsFor, DRAWER, mailtoHref, telHref, slugify } from "@/lib/data";
+import { countInTree, iconsFor, DRAWER, mailtoHref, telHref, slugify, topLevel } from "@/lib/data";
 
 export default function HomeView({ data }) {
   const { settings, categories, products, heroSlides } = data;
@@ -102,7 +102,9 @@ export default function HomeView({ data }) {
           <p className="sec-note">tap a lane to see what's in it — or scroll down for a few fresh picks.</p>
         </div>
         <div className="cat-grid">
-          {categories.map((c, i) => (
+          {topLevel(categories).map((c, i) => {
+            const n = countInTree(products, categories, c);
+            return (
             <Link
               key={c.name}
               href={`/shop/${slugify(c.name)}`}
@@ -112,7 +114,7 @@ export default function HomeView({ data }) {
               <div className="catcard-media">
                 <Frame tone={c.tone} image={c.image} />
                 <span className="catcard-count">
-                  {countIn(products, c.name)} {countIn(products, c.name) === 1 ? "thing" : "things"}
+                  {n} {n === 1 ? "thing" : "things"}
                 </span>
                 <div className="catcard-overlay">
                   <span className="catcard-name">{c.name}</span>
@@ -134,7 +136,8 @@ export default function HomeView({ data }) {
                 })}
               </div>
             </Link>
-          ))}
+            );
+          })}
         </div>
       </section>
 

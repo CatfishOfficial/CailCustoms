@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Frame from "./Frame";
 import ProductCard from "./ProductCard";
-import { madeToOrder, mailtoHref, slugify } from "@/lib/data";
+import { mailtoHref, slugify, specsFor } from "@/lib/data";
 
 export default function ProductView({ data, product }) {
   const { products } = data;
@@ -16,7 +16,10 @@ export default function ProductView({ data, product }) {
   const [active, setActive] = useState(0);
   const cur = Math.min(active, gallery.length - 1);
   const related = products.filter((p) => p.cat === product.cat && p.id !== product.id).slice(0, 3);
-  const stock = madeToOrder(product.price) ? "made to order" : "in stock · ships in ~3 days";
+  const specs = specsFor(data.settings, product);
+  const sizes = (product.sizes || []).filter(Boolean);
+  const [size, setSize] = useState("");
+  const inquireSubject = product.name + (size ? ` (size ${size})` : "");
 
   return (
     <section className="page">
@@ -56,12 +59,29 @@ export default function ProductView({ data, product }) {
           <h1 className="pdp-name">{product.name}</h1>
           <div className="pdp-price">{product.price}</div>
           <p className="pdp-desc">{product.desc}</p>
+          {sizes.length > 0 && (
+            <div className="pdp-sizes">
+              <span className="pdp-sizes-label">size{size ? `: ${size}` : ""}</span>
+              <div className="size-chips">
+                {sizes.map((sz) => (
+                  <button
+                    type="button"
+                    key={sz}
+                    className={`size-chip ${size === sz ? "on" : ""}`}
+                    onClick={() => setSize(size === sz ? "" : sz)}
+                  >
+                    {sz}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <ul className="pdp-specs">
-            <li><span>availability</span><b>{stock}</b></li>
-            <li><span>ships from</span><b>{data.settings.location.toLowerCase()}</b></li>
-            <li><span>how to get it</span><b>reach out below</b></li>
+            {specs.map((row, i) => (
+              <li key={i}><span>{row.label}</span><b>{row.value}</b></li>
+            ))}
           </ul>
-          <a className="btn pdp-buy" href={mailtoHref(data.settings.email, product.name)}>inquire about this</a>
+          <a className="btn pdp-buy" href={mailtoHref(data.settings.email, inquireSubject)}>inquire about this</a>
           <p className="pdp-note">no cart — we'll confirm sizing, specs, and final price by email, then get it to you.</p>
         </div>
       </div>
