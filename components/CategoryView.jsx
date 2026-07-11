@@ -61,21 +61,22 @@ export default function CategoryView({ data, cat }) {
 
       {hasItems ? (
         <div className="grid">
+          {showItemBox && meta && (
+            <Link className="grididea" href={`/ideas/${slugify(meta.name)}`}>
+              <span className="idea-arcs" aria-hidden="true" />
+              <span className="idea-burst" aria-hidden="true">✶</span>
+              <span className="idea-float f1" aria-hidden="true">✿</span>
+              <span className="idea-float f2" aria-hidden="true">✶</span>
+              <span className="idea-float f3" aria-hidden="true">❋</span>
+              <span className="grididea-eyebrow">custom work</span>
+              <span className="grididea-title">got an <span className="idea-tilt">idea?</span></span>
+              <span className="idea-squiggle" aria-hidden="true" />
+              <span className="grididea-go">pitch it →</span>
+            </Link>
+          )}
           {list.map((p, i) => (
             <ProductCard key={p.id} p={p} i={i} showSizes={isApparel} />
           ))}
-          {showItemBox && meta && (
-            <Link className="card grididea-card" href={`/ideas/${slugify(meta.name)}`}>
-              <div className="card-media">
-                <Frame tone={meta.tone || "t4"} />
-                <span className="grididea-plus" aria-hidden="true">✶</span>
-              </div>
-              <div className="card-body">
-                <span className="card-name">got an idea?</span>
-                <span className="card-price">pitch it →</span>
-              </div>
-            </Link>
-          )}
         </div>
       ) : (
         <p className="sec-note">nothing here yet — check back soon.</p>
