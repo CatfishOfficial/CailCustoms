@@ -492,21 +492,22 @@ body{background:#F2EEE4;}
 .subcat-divider{height:1px;background:var(--line);margin:22px 0 26px;}
 
 /* the ITEM "got an idea?" card that sits first in a category's product grid —
-   a mini of the pitch band / bottom idea CTA, keeping the 70s look. */
-.cc .grididea{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:12px;min-height:280px;padding:26px 24px;border:2px solid var(--ink);border-radius:18px;background:var(--card);color:var(--ink);text-align:left;animation:cardIn .6s cubic-bezier(.16,1,.3,1) backwards;transition:transform .2s,box-shadow .2s,background .2s;}
-.cc .grididea:hover{transform:translate(-3px,-4px) rotate(-.5deg);box-shadow:8px 10px 0 var(--ink);background:#FBF4E2;}
-.cc .grididea:active{transform:translate(1px,1px) rotate(0deg);box-shadow:2px 2px 0 var(--ink);transition-duration:.05s;}
-.grididea .idea-burst{position:absolute;top:14px;right:16px;font-size:40px;z-index:3;}
+   mirrors a product card (4/5 framed media + caption) so the two match, with
+   the pitch-band 70s look packed inside the frame. */
+.cc .grididea{display:flex;flex-direction:column;text-align:left;animation:cardIn .6s cubic-bezier(.16,1,.3,1) backwards;}
+.grididea-media{position:relative;overflow:hidden;aspect-ratio:4/5;border-radius:6px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:12px;padding:clamp(18px,2vw,26px);transition:transform .22s cubic-bezier(.16,1,.3,1),box-shadow .22s,border-color .22s;}
+.cc .grididea:hover .grididea-media{transform:translateY(-6px);box-shadow:0 20px 40px rgba(24,23,19,.16);border-color:var(--ink);}
+.grididea .idea-burst{position:absolute;top:14px;right:16px;font-size:38px;z-index:3;}
 .grididea-eyebrow{position:relative;z-index:3;font-family:var(--mono);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#E9B44C;background:var(--ink);padding:6px 11px;border-radius:999px;transform:rotate(-2deg);transition:transform .2s;}
-.grididea-title{position:relative;z-index:3;font-family:var(--display);font-size:clamp(30px,3.2vw,44px);text-transform:uppercase;line-height:.92;letter-spacing:.01em;text-shadow:2px 2px 0 #E9B44C,4px 4px 0 #C1502E;}
-.grididea .idea-squiggle{z-index:3;margin:0 0 2px;width:min(220px,80%);}
-.cc .grididea-go{position:relative;z-index:3;margin-top:2px;font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink);background:#E9B44C;border:2px solid var(--ink);padding:10px 15px;border-radius:999px;transform:rotate(3deg);transition:transform .2s,background .2s;white-space:nowrap;}
+.grididea-title{position:relative;z-index:3;font-family:var(--display);font-size:clamp(26px,2.7vw,40px);text-transform:uppercase;line-height:.92;letter-spacing:.01em;text-shadow:2px 2px 0 #E9B44C,4px 4px 0 #C1502E;}
+.grididea .idea-squiggle{z-index:3;margin:0;width:min(200px,82%);}
+.cc .grididea .card-price{color:#C1502E;transform:rotate(-1.5deg);transition:transform .2s;}
 /* several different hover animations */
 .cc .grididea:hover .idea-arcs{transform:scale(1.16) rotate(-3deg);}
 .cc .grididea:hover .idea-burst{transform:rotate(140deg) scale(1.25);color:#E8853B;}
 .cc .grididea:hover .idea-tilt{transform:rotate(4deg) scale(1.08);}
 .cc .grididea:hover .grididea-eyebrow{transform:rotate(2deg) scale(1.05);}
-.cc .grididea:hover .grididea-go{transform:rotate(-4deg) scale(1.12);background:#E8853B;}
+.cc .grididea:hover .card-price{transform:rotate(3deg) scale(1.06);}
 .cc .grididea:hover .idea-float{animation-duration:1.4s;}
 
 /* apparel size hint on cards */
