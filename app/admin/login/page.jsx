@@ -27,6 +27,15 @@ export default function LoginPage() {
       setMessage(error.message);
       return;
     }
+    // Signed in — but only admins belong here. If not, sign back out so we
+    // don't leave a half-authed session, and say so.
+    const { data: isAdmin } = await supabase.rpc("is_admin");
+    if (isAdmin !== true) {
+      await supabase.auth.signOut();
+      setStatus("error");
+      setMessage("this isn't an admin account. head to your account sign-in instead.");
+      return;
+    }
     // Session cookie is set — hand off to the server-guarded admin.
     router.replace("/admin");
     router.refresh();

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { checkIsAdmin } from "@/lib/admin";
 import { DEFAULT_DATA } from "@/lib/data";
 import AdminClient from "@/components/admin/AdminClient";
 
@@ -13,6 +14,7 @@ export default async function AdminPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/admin/login");
+  if (!(await checkIsAdmin(supabase))) redirect("/account");
 
   const [settingsRes, catsRes, prodsRes, slidesRes] = await Promise.all([
     supabase.from("settings").select("*").eq("id", 1).maybeSingle(),

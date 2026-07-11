@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { checkIsAdmin } from "@/lib/admin";
 import OrdersClient from "@/components/admin/OrdersClient";
 
 export const metadata = { title: "orders", robots: { index: false, follow: false } };
@@ -10,6 +11,7 @@ export default async function AdminOrdersPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/admin/login");
+  if (!(await checkIsAdmin(supabase))) redirect("/account");
 
   const [ordersRes, ideasRes] = await Promise.all([
     supabase.from("orders").select("*").order("created_at", { ascending: false }),

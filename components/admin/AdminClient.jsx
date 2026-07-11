@@ -11,6 +11,7 @@ import Field from "./Field";
 import ToneField from "./ToneField";
 import ImageInput from "./ImageInput";
 import SizesInput from "./SizesInput";
+import AdminsManager from "./AdminsManager";
 
 const newId = () =>
   typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : uid();
@@ -252,7 +253,7 @@ export default function AdminClient({ initialData, userEmail }) {
       )}
 
       <div className="admin-tabs">
-        {["products", "categories", "hero", "site"].map((t) => (
+        {["products", "categories", "hero", "site", "staff"].map((t) => (
           <button key={t} className={`chip ${tab === t ? "on" : ""}`} onClick={() => setTab(t)}>{t}</button>
         ))}
       </div>
@@ -412,6 +413,8 @@ export default function AdminClient({ initialData, userEmail }) {
           <Field label="marquee text (separate with · )" value={s.marquee} onChange={(v) => patchSettings({ marquee: v })} area />
         </div>
       )}
+
+      {tab === "staff" && <AdminsManager />}
     </section>
   );
 }

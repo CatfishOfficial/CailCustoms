@@ -43,18 +43,35 @@ export async function middleware(request) {
       data: { user },
     } = await supabase.auth.getUser();
 
-    // Unauthenticated users hitting the admin app get sent to login.
-    if (isAdmin && !isLogin && !user) {
+    const redirectTo = (pathname) => {
       const redirectUrl = request.nextUrl.clone();
-      redirectUrl.pathname = "/admin/login";
+      redirectUrl.pathname = pathname;
       return NextResponse.redirect(redirectUrl);
+    };
+
+    // Only spend an RPC on admin routes. `is_admin()` is the SECURITY DEFINER
+    // function from migration 004; treat any failure as "not an admin".
+    let admin = false;
+    if (user && isAdmin) {
+      try {
+        const { data } = await supabase.rpc("is_admin");
+        admin = data === true;
+      } catch {
+        admin = false;
+      }
     }
 
-    // Already logged in? Skip the admin login screen.
+    // The admin app requires a signed-in admin. Customers (or signed-out
+    // visitors) never see it.
+    if (isAdmin && !isLogin) {
+      if (!user) return redirectTo("/admin/login");
+      if (!admin) return redirectTo("/account");
+    }
+
+    // Send anyone already signed in away from the admin login screen — admins
+    // into the admin, everyone else to their account.
     if (isLogin && user) {
-      const redirectUrl = request.nextUrl.clone();
-      redirectUrl.pathname = "/admin";
-      return NextResponse.redirect(redirectUrl);
+      return redirectTo(admin ? "/admin" : "/account");
     }
 
     // Unauthenticated users hitting the account dashboard get sent to sign-in.

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Wrench, Inbox, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { checkIsAdmin } from "@/lib/admin";
 
 export const metadata = { title: "admin", robots: { index: false, follow: false } };
 
@@ -13,6 +14,7 @@ export default async function AdminHubPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/admin/login");
+  if (!(await checkIsAdmin(supabase))) redirect("/account");
 
   const [ordersRes, ideasRes] = await Promise.all([
     supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "new"),
