@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Plus, Trash2, ArrowLeft, LogOut, Lock, Inbox } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { DEFAULT_DATA, uid, LAYOUTS, topLevel, defaultSpecs } from "@/lib/data";
+import { DEFAULT_DATA, uid, LAYOUTS, topLevel } from "@/lib/data";
 import Frame from "@/components/Frame";
 import Field from "./Field";
 import ToneField from "./ToneField";
@@ -149,7 +149,7 @@ export default function AdminClient({ initialData, userEmail }) {
     setData((d) => ({
       ...d,
       products: [
-        { id: uid(), name: "New listing", cat: d.categories[0]?.name || "Everything", price: "$0", tone: "t2", blurb: "", desc: "", images: [], sizes: [], specs: defaultSpecs(d.settings, { price: "$0" }), featured: false },
+        { id: uid(), name: "New listing", cat: d.categories[0]?.name || "Everything", price: "$0", tone: "t2", blurb: "", desc: "", images: [], sizes: [], specs: [], featured: false },
         ...d.products,
       ],
     }));

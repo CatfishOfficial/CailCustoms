@@ -17,7 +17,7 @@ export default function ProductView({ data, product }) {
   const [active, setActive] = useState(0);
   const cur = Math.min(active, gallery.length - 1);
   const related = products.filter((p) => p.cat === product.cat && p.id !== product.id).slice(0, 3);
-  const specs = specsFor(data.settings, product);
+  const specs = specsFor(product);
 
   return (
     <section className="page">
@@ -57,11 +57,13 @@ export default function ProductView({ data, product }) {
           <h1 className="pdp-name">{product.name}</h1>
           <div className="pdp-price">{product.price}</div>
           <p className="pdp-desc">{product.desc}</p>
-          <ul className="pdp-specs">
-            {specs.map((row, i) => (
-              <li key={i}><span>{row.label}</span><b>{row.value}</b></li>
-            ))}
-          </ul>
+          {specs.length > 0 && (
+            <ul className="pdp-specs">
+              {specs.map((row, i) => (
+                <li key={i}><span>{row.label}</span><b>{row.value}</b></li>
+              ))}
+            </ul>
+          )}
           <AddToCart product={product} />
           <a className="pdp-alt" href={mailtoHref(data.settings.email, product.name)}>prefer email? ask us about this →</a>
           <p className="pdp-note">add it to your cart and send an order request — we'll confirm sizing, specs, and final price by email, then get it to you.</p>
