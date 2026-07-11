@@ -17,7 +17,7 @@ export default function ProductView({ data, product }) {
     : [product.tone, "t4", "t6"].filter((t, idx, a) => a.indexOf(t) === idx).slice(0, 3);
   const [active, setActive] = useState(0);
   const cur = Math.min(active, gallery.length - 1);
-  const related = products.filter((p) => p.cat === product.cat && p.id !== product.id).slice(0, 3);
+  const related = products.filter((p) => p.cat === product.cat && p.id !== product.id && !p.private).slice(0, 3);
   const specs = specsFor(product);
   const available = isAvailable(product);
   const sizes = offeredSizes(product);
@@ -63,6 +63,7 @@ export default function ProductView({ data, product }) {
         </div>
 
         <div className="pdp-info">
+          {product.private && <span className="pdp-private">private · custom order</span>}
           <Link className="pdp-cat" href={`/shop/${slugify(product.cat)}`}>{product.cat}</Link>
           <h1 className="pdp-name">{product.name}</h1>
           <div className="pdp-price">{product.price}</div>

@@ -1,5 +1,5 @@
 import { getSiteData } from "@/lib/site";
-import { slugify, ALL_SLUG } from "@/lib/data";
+import { slugify, ALL_SLUG, publicProducts } from "@/lib/data";
 
 export default async function sitemap() {
   const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -25,7 +25,7 @@ export default async function sitemap() {
     priority: 0.5,
   }));
 
-  const productPages = products.map((p) => ({
+  const productPages = publicProducts(products).map((p) => ({
     url: `${base}/product/${p.id}`,
     lastModified: now,
     changeFrequency: "weekly",

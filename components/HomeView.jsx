@@ -6,10 +6,11 @@ import Frame from "./Frame";
 import HeroSlides from "./HeroSlides";
 import Marquee from "./Marquee";
 import ProductCard from "./ProductCard";
-import { countInTree, iconsFor, DRAWER, mailtoHref, telHref, slugify, topLevel } from "@/lib/data";
+import { countInTree, iconsFor, DRAWER, mailtoHref, telHref, slugify, topLevel, publicProducts } from "@/lib/data";
 
 export default function HomeView({ data }) {
-  const { settings, categories, products, heroSlides } = data;
+  const { settings, categories, heroSlides } = data;
+  const products = publicProducts(data.products);
   const heroMediaRef = useRef(null);
   const revealRefs = useRef([]);
   const setReveal = (el) => {

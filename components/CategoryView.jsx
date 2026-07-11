@@ -2,11 +2,12 @@ import Link from "next/link";
 import ProductCard from "./ProductCard";
 import IdeaCta from "./IdeaCta";
 import Frame from "./Frame";
-import { slugify, ALL_SLUG, topLevel, childrenOf, countIn } from "@/lib/data";
+import { slugify, ALL_SLUG, topLevel, childrenOf, countIn, publicProducts } from "@/lib/data";
 
 // `cat` is a category name, or "All" for the everything/all-products view.
 export default function CategoryView({ data, cat }) {
-  const { categories, products } = data;
+  const { categories } = data;
+  const products = publicProducts(data.products);
   const isAll = cat === "All";
   const list = isAll ? products : products.filter((p) => p.cat === cat);
   const meta = categories.find((c) => c.name === cat);

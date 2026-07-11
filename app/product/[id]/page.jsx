@@ -20,6 +20,8 @@ export async function generateMetadata({ params }) {
   return {
     title: product.name,
     description,
+    // Private listings are link-only — keep them out of search engines.
+    robots: product.private ? { index: false, follow: false } : undefined,
     openGraph: {
       title: product.name,
       description,

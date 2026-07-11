@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Paperclip, Wrench } from "lucide-react";
+import { ArrowLeft, Paperclip, Wrench, Link2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { telHref } from "@/lib/data";
 import { ORDER_STATUSES, IDEA_STATUSES, REQUEST_STATUSES, composeOrderText } from "@/lib/orders";
@@ -41,16 +41,33 @@ function Contact({ name, email, phone, contacts }) {
   );
 }
 
-export default function OrdersClient({ initialOrders, initialIdeas, initialRequests, userEmail }) {
+export default function OrdersClient({ initialOrders, initialIdeas, initialRequests, privateListings, userEmail }) {
   const [orders, setOrders] = useState(initialOrders);
   const [ideas, setIdeas] = useState(initialIdeas);
   const [requests, setRequests] = useState(initialRequests || []);
   const [tab, setTab] = useState("orders");
   const [filter, setFilter] = useState("all");
   const [err, setErr] = useState("");
+  const privates = privateListings || [];
 
   const patchStatus = (setList) => (id, status) =>
     setList((list) => list.map((r) => (r.id === id ? { ...r, status } : r)));
+
+  // Link (or unlink) a private listing to a custom-idea request so it can be
+  // sent to the customer to complete their order.
+  const linkListing = async (id, productId) => {
+    const prev = ideas.find((r) => r.id === id)?.linked_product_id || null;
+    setIdeas((list) => list.map((r) => (r.id === id ? { ...r, linked_product_id: productId || null } : r)));
+    const { error } = await createClient().from("idea_submissions").update({ linked_product_id: productId || null }).eq("id", id);
+    if (error) {
+      setIdeas((list) => list.map((r) => (r.id === id ? { ...r, linked_product_id: prev } : r)));
+      setErr(error.message || "couldn't link listing");
+    }
+  };
+  const copyLink = async (productId) => {
+    const url = `${window.location.origin}/product/${productId}`;
+    try { await navigator.clipboard.writeText(url); } catch { window.prompt("copy this link", url); }
+  };
 
   const list = tab === "orders" ? orders : tab === "ideas" ? ideas : requests;
   const statuses = tab === "orders" ? ORDER_STATUSES : tab === "ideas" ? IDEA_STATUSES : REQUEST_STATUSES;
@@ -135,6 +152,16 @@ export default function OrdersClient({ initialOrders, initialIdeas, initialReque
                     ))}
                   </div>
                 )}
+                <div className="ord-link">
+                  <label>private listing to complete their order</label>
+                  <select className="adm-select" value={r.linked_product_id || ""} onChange={(e) => linkListing(r.id, e.target.value)}>
+                    <option value="">— none —</option>
+                    {privates.map((p) => <option key={p.id} value={p.id}>{p.name} · {p.price}</option>)}
+                  </select>
+                  {r.linked_product_id && (
+                    <button className="adm-copylink" onClick={() => copyLink(r.linked_product_id)}><Link2 size={13} /> copy link</button>
+                  )}
+                </div>
               </article>
             ) : (
               <article className="ord-card" key={r.id}>

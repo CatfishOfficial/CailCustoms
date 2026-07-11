@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Plus, Trash2, ArrowLeft, LogOut, Lock, Inbox } from "lucide-react";
+import { Plus, Trash2, ArrowLeft, LogOut, Lock, Inbox, Link2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_DATA, uid, LAYOUTS, topLevel, isTracked, offeredSizes } from "@/lib/data";
 import Frame from "@/components/Frame";
@@ -16,6 +16,27 @@ import InventoryManager from "./InventoryManager";
 
 const newId = () =>
   typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : uid();
+
+// Copies a listing's public URL — used to hand a private/custom listing to a
+// customer. Reads the origin at click time so it works on any deploy.
+function CopyLink({ id }) {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    const url = `${window.location.origin}/product/${id}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      window.prompt("copy this link", url);
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+  return (
+    <button type="button" className="adm-copylink" onClick={copy}>
+      <Link2 size={13} /> {copied ? "copied!" : "copy link"}
+    </button>
+  );
+}
 
 // ---- persistence: push the full admin state to Supabase (reconcile by id) ----
 async function deleteMissing(supabase, table, keepIds) {
@@ -68,6 +89,7 @@ async function flush(data) {
     id: p.id, name: p.name, cat: p.cat, price: p.price, tone: p.tone,
     blurb: p.blurb, description: p.desc, images: p.images, sizes: p.sizes || [],
     specs: p.specs || [], featured: p.featured, position: i, available: p.available !== false,
+    private: !!p.private,
   }));
   if (prods.length) {
     const { error } = await supabase.from("products").upsert(prods);
@@ -151,10 +173,20 @@ export default function AdminClient({ initialData, userEmail }) {
     setData((d) => ({
       ...d,
       products: [
-        { id: uid(), name: "New listing", cat: d.categories[0]?.name || "Everything", price: "$0", tone: "t2", blurb: "", desc: "", images: [], sizes: [], specs: [], featured: false, available: true, stock: [] },
+        { id: uid(), name: "New listing", cat: d.categories[0]?.name || "Everything", price: "$0", tone: "t2", blurb: "", desc: "", images: [], sizes: [], specs: [], featured: false, available: true, stock: [], private: false },
         ...d.products,
       ],
     }));
+  const addPrivateProduct = () => {
+    const id = uid();
+    setData((d) => ({
+      ...d,
+      products: [
+        { id, name: "Custom order", cat: d.categories[0]?.name || "Everything", price: "let's talk", tone: "t3", blurb: "", desc: "", images: [], sizes: [], specs: [], featured: false, available: true, stock: [], private: true },
+        ...d.products,
+      ],
+    }));
+  };
   const removeProduct = (id) => setData((d) => ({ ...d, products: d.products.filter((p) => p.id !== id) }));
   const addImage = (id) =>
     setData((d) => ({ ...d, products: d.products.map((p) => (p.id === id ? { ...p, images: [...(p.images || []), ""] } : p)) }));
@@ -254,7 +286,7 @@ export default function AdminClient({ initialData, userEmail }) {
       )}
 
       <div className="admin-tabs">
-        {["products", "categories", "inventory", "hero", "site", "staff"].map((t) => (
+        {["products", "categories", "inventory", "custom", "hero", "site", "staff"].map((t) => (
           <button key={t} className={`chip ${tab === t ? "on" : ""}`} onClick={() => setTab(t)}>{t}</button>
         ))}
       </div>
@@ -312,8 +344,12 @@ export default function AdminClient({ initialData, userEmail }) {
                   <div className="adm-foot-checks">
                     <label className="adm-check"><input type="checkbox" checked={!!p.featured} onChange={(e) => patchProduct(p.id, { featured: e.target.checked })} /> featured on home</label>
                     <label className="adm-check"><input type="checkbox" checked={p.available !== false} onChange={(e) => patchProduct(p.id, { available: e.target.checked })} /> available {isTracked(p) ? "(auto-off at 0 stock)" : "(uncheck → notify-me)"}</label>
+                    <label className="adm-check"><input type="checkbox" checked={!!p.private} onChange={(e) => patchProduct(p.id, { private: e.target.checked })} /> private (link-only, hidden from shop)</label>
                   </div>
-                  <button className="adm-del" onClick={() => removeProduct(p.id)}><Trash2 size={14} /> delete</button>
+                  <div className="adm-foot-right">
+                    {p.private && <CopyLink id={p.id} />}
+                    <button className="adm-del" onClick={() => removeProduct(p.id)}><Trash2 size={14} /> delete</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -422,6 +458,40 @@ export default function AdminClient({ initialData, userEmail }) {
           <Field label="about line" value={s.about} onChange={(v) => patchSettings({ about: v })} area />
           <Field label="ticker text (separate with · )" value={s.ticker} onChange={(v) => patchSettings({ ticker: v })} area />
           <Field label="marquee text (separate with · )" value={s.marquee} onChange={(v) => patchSettings({ marquee: v })} area />
+        </div>
+      )}
+
+      {tab === "custom" && (
+        <div className="adm-section">
+          <p className="adm-staff-intro">
+            Private listings are <b>link-only</b> — hidden from the shop, sitemap, and search, reachable
+            only by their URL. Build one for a custom order, then copy its link and send it to the
+            customer (or attach it to their request in the orders inbox). Edit the details like any
+            listing in the <b>Products</b> tab.
+          </p>
+          <button className="adm-add-big" onClick={() => { addPrivateProduct(); setTab("products"); }}>
+            <Plus size={16} /> new private listing
+          </button>
+          {data.products.filter((p) => p.private).length === 0 ? (
+            <p className="sec-note">no private listings yet.</p>
+          ) : (
+            <ul className="adm-private-list">
+              {data.products.filter((p) => p.private).map((p) => (
+                <li className="adm-private-row" key={p.id}>
+                  <div className="adm-private-preview"><Frame tone={p.tone} image={(p.images || [])[0]} /></div>
+                  <div className="adm-private-info">
+                    <b>{p.name}</b>
+                    <span>{p.price} · {p.cat}</span>
+                  </div>
+                  <div className="adm-private-actions">
+                    <CopyLink id={p.id} />
+                    <a className="adm-copylink" href={`/product/${p.id}`} target="_blank" rel="noreferrer"><ArrowLeft size={13} style={{ transform: "rotate(135deg)" }} /> open</a>
+                    <button className="adm-copylink" onClick={() => setTab("products")}>edit</button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
 
