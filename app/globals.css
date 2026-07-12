@@ -618,5 +618,5 @@ body{background:#F2EEE4;}
 
 /* "custom design" tag — per-letter rainbow (static, hero-flash vibe), same pill
    form as the other badges, top-right of the card. */
-.card-custom{position:absolute;z-index:5;right:12px;bottom:12px;font-family:var(--mono);font-weight:700;font-size:10px;letter-spacing:.04em;text-transform:uppercase;background:rgba(252,250,244,.92);padding:5px 9px;border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,.12);}
-.pdp-custom{display:inline-block;font-family:var(--mono);font-weight:700;font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:var(--card);border:1px solid var(--line);padding:4px 9px;border-radius:2px;margin-bottom:12px;margin-right:6px;}
+.card-custom{position:absolute;z-index:5;right:12px;bottom:12px;font-family:var(--mono);font-weight:700;font-size:10px;letter-spacing:.05em;text-transform:uppercase;background:var(--ink);padding:5px 9px;border-radius:2px;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.pdp-custom{display:inline-block;font-family:var(--mono);font-weight:700;font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:var(--ink);padding:4px 9px;border-radius:2px;margin-bottom:12px;margin-right:6px;}
