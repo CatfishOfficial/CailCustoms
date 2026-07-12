@@ -12,7 +12,7 @@ export default function ProductCard({ p, i, showSizes = false, highlight = false
     <Link href={`/product/${p.id}`} className={`card ${available ? "" : "card-unavail"} ${highlight ? "card-hl" : ""}`} style={{ animationDelay: `${i * 55}ms` }}>
       {highlight && (
         <span className="card-flair" aria-hidden="true">
-          <span className="cf-arcbox"><span className="idea-arcs" /></span>
+          <span className="cf-rainbow" />
           <span className="idea-float cf-f1">✿</span>
           <span className="idea-float cf-f2">✶</span>
           <span className="idea-float cf-f3">❋</span>
