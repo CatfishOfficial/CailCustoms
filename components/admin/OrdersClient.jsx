@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Paperclip, Wrench, Link2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { telHref } from "@/lib/data";
-import { ORDER_STATUSES, IDEA_STATUSES, REQUEST_STATUSES, composeOrderText } from "@/lib/orders";
+import { ORDER_STATUSES, PREORDER_STATUSES, IDEA_STATUSES, REQUEST_STATUSES, composeOrderText } from "@/lib/orders";
 
 const fmtWhen = (iso) =>
   new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).toLowerCase();
@@ -73,6 +73,7 @@ export default function OrdersClient({ initialOrders, initialIdeas, initialReque
   const statuses = tab === "orders" ? ORDER_STATUSES : tab === "ideas" ? IDEA_STATUSES : REQUEST_STATUSES;
   const shown = filter === "all" ? list : list.filter((r) => r.status === filter);
   const newCount = (rows) => rows.filter((r) => r.status === "new").length;
+  const waitingPreorders = requests.filter((r) => r.kind === "preorder" && r.status === "waiting");
 
   return (
     <section className="admin">
@@ -112,6 +113,25 @@ export default function OrdersClient({ initialOrders, initialIdeas, initialReque
       </div>
 
       {err && <p className="login-error">{err}</p>}
+
+      {tab === "orders" && waitingPreorders.length > 0 && (
+        <div className="ord-waiting-pre">
+          <p className="ord-section-label">pre-orders — waiting on shipment</p>
+          <div className="ord-list">
+            {waitingPreorders.map((r) => (
+              <article className="ord-card" key={r.id}>
+                <div className="ord-head">
+                  <span className="ord-when">{fmtWhen(r.created_at)} · <b className="ord-kind pre">pre-order</b></span>
+                  <StatusSelect table="restock_requests" row={r} statuses={PREORDER_STATUSES} onChange={patchStatus(setRequests)} onError={setErr} />
+                </div>
+                <Contact name={r.name} email={r.email} phone={r.phone} />
+                <p className="ord-req">wants <b>{r.product_name || "an item"}</b>{r.size ? ` · size ${r.size}` : ""}{r.qty ? ` · qty ${r.qty}` : ""}</p>
+                {r.message && <p className="ord-msg">"{r.message}"</p>}
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
 
       {shown.length === 0 ? (
         <p className="sec-note ord-empty">nothing here{filter !== "all" ? ` with status "${filter}"` : " yet"}.</p>
@@ -167,7 +187,7 @@ export default function OrdersClient({ initialOrders, initialIdeas, initialReque
               <article className="ord-card" key={r.id}>
                 <div className="ord-head">
                   <span className="ord-when">{fmtWhen(r.created_at)} · <b className={r.kind === "preorder" ? "ord-kind pre" : "ord-kind"}>{r.kind === "preorder" ? "pre-order" : "notify me"}</b></span>
-                  <StatusSelect table="restock_requests" row={r} statuses={REQUEST_STATUSES} onChange={patchStatus(setRequests)} onError={setErr} />
+                  <StatusSelect table="restock_requests" row={r} statuses={r.kind === "preorder" ? PREORDER_STATUSES : REQUEST_STATUSES} onChange={patchStatus(setRequests)} onError={setErr} />
                 </div>
                 <Contact name={r.name} email={r.email} phone={r.phone} />
                 <p className="ord-req">wants <b>{r.product_name || "an item"}</b>{r.size ? ` · size ${r.size}` : ""}{r.qty ? ` · qty ${r.qty}` : ""}</p>
