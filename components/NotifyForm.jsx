@@ -4,9 +4,11 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { knownSizes } from "@/lib/data";
 
-// Shown in place of "add to cart" when a listing is unavailable. Saves a
-// restock_requests row (public insert) so staff can reach out when it's back.
-export default function NotifyForm({ product }) {
+// Shown in place of "add to cart" when a listing is unavailable (notify) or a
+// pre-order (reserve). Saves a restock_requests row (public insert) so staff
+// can reach out. Same flow either way — just different copy + kind.
+export default function NotifyForm({ product, mode = "notify" }) {
+  const preorder = mode === "preorder";
   const sizes = knownSizes(product);
   const [form, setForm] = useState({
     name: "", email: "", phone: "", size: sizes[0] || "", qty: 1, message: "",
@@ -26,6 +28,7 @@ export default function NotifyForm({ product }) {
     const { error } = await createClient().from("restock_requests").insert({
       product_id: product.id,
       product_name: product.name,
+      kind: preorder ? "preorder" : "notify",
       size: form.size || "",
       qty: Number(form.qty) || 1,
       name: form.name.trim(),
@@ -44,15 +47,23 @@ export default function NotifyForm({ product }) {
   if (status === "done") {
     return (
       <div className="notify-done">
-        <b>you're on the list.</b>
-        <span>we'll email you the moment {product.name.toLowerCase()} is back.</span>
+        <b>{preorder ? "you're on the pre-order list." : "you're on the list."}</b>
+        <span>
+          {preorder
+            ? `we'll reach out to confirm your pre-order of ${product.name.toLowerCase()}.`
+            : `we'll email you the moment ${product.name.toLowerCase()} is back.`}
+        </span>
       </div>
     );
   }
 
   return (
     <form className="notify-form" onSubmit={submit}>
-      <p className="notify-lead">currently unavailable — want one when it's back? we'll reach out.</p>
+      <p className="notify-lead">
+        {preorder
+          ? "available for pre-order — reserve yours and we'll reach out to lock it in."
+          : "currently unavailable — want one when it's back? we'll reach out."}
+      </p>
       <div className="notify-row">
         <label className="adm-field">
           <span>email *</span>
@@ -87,7 +98,7 @@ export default function NotifyForm({ product }) {
       </label>
       {error && <p className="login-error">{error}</p>}
       <button className="btn pdp-buy" type="submit" disabled={status === "busy"}>
-        {status === "busy" ? "sending…" : "notify me when it's back"}
+        {status === "busy" ? "sending…" : preorder ? "reserve my pre-order" : "notify me when it's back"}
       </button>
     </form>
   );

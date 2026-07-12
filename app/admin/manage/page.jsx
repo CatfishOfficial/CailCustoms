@@ -49,7 +49,7 @@ export default async function AdminPage() {
       id: p.id, name: p.name, cat: p.cat, price: p.price, tone: p.tone,
       blurb: p.blurb, desc: p.description, images: Array.isArray(p.images) ? p.images : [],
       sizes: Array.isArray(p.sizes) ? p.sizes : [], specs: Array.isArray(p.specs) ? p.specs : [], featured: !!p.featured,
-      available: p.available !== false, stock: stockByProduct[p.id] || [], private: !!p.private,
+      available: p.available !== false, preorder: !!p.preorder, stock: stockByProduct[p.id] || [], private: !!p.private,
     })),
     heroSlides: (slidesRes.data || []).map((sl) => ({ id: sl.id, tone: sl.tone, label: sl.label, image: sl.image })),
   };

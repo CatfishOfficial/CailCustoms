@@ -610,3 +610,8 @@ body{background:#F2EEE4;}
 .card-hl:hover .cf-rainbow{animation-duration:1.5s;}
 @keyframes cfWobble{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
 @media (prefers-reduced-motion: reduce){.card-flair .idea-float,.cf-rainbow{animation:none;}}
+
+/* pre-order — bright blue label, card NOT grayed */
+.card-preorder{position:absolute;z-index:5;right:12px;bottom:12px;font-family:var(--mono);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.04em;background:var(--accent);color:#fff;padding:5px 10px;border-radius:2px;box-shadow:0 2px 8px rgba(37,64,230,.35);}
+.pdp-preorder{display:inline-block;font-family:var(--mono);font-weight:700;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--accent);padding:4px 9px;border-radius:999px;margin-bottom:12px;margin-right:6px;}
+.ord-kind.pre{color:var(--accent);}

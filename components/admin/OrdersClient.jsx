@@ -166,7 +166,7 @@ export default function OrdersClient({ initialOrders, initialIdeas, initialReque
             ) : (
               <article className="ord-card" key={r.id}>
                 <div className="ord-head">
-                  <span className="ord-when">{fmtWhen(r.created_at)}</span>
+                  <span className="ord-when">{fmtWhen(r.created_at)} · <b className={r.kind === "preorder" ? "ord-kind pre" : "ord-kind"}>{r.kind === "preorder" ? "pre-order" : "notify me"}</b></span>
                   <StatusSelect table="restock_requests" row={r} statuses={REQUEST_STATUSES} onChange={patchStatus(setRequests)} onError={setErr} />
                 </div>
                 <Contact name={r.name} email={r.email} phone={r.phone} />

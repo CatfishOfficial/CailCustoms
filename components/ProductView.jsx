@@ -6,7 +6,7 @@ import Frame from "./Frame";
 import ProductCard from "./ProductCard";
 import AddToCart from "./cart/AddToCart";
 import NotifyForm from "./NotifyForm";
-import { mailtoHref, slugify, specsFor, isAvailable, isTracked, offeredSizes } from "@/lib/data";
+import { mailtoHref, slugify, specsFor, listingState, isTracked, offeredSizes } from "@/lib/data";
 
 export default function ProductView({ data, product }) {
   const { products } = data;
@@ -19,7 +19,8 @@ export default function ProductView({ data, product }) {
   const cur = Math.min(active, gallery.length - 1);
   const related = products.filter((p) => p.cat === product.cat && p.id !== product.id && !p.private).slice(0, 3);
   const specs = specsFor(product);
-  const available = isAvailable(product);
+  const state = listingState(product);
+  const available = state === "available";
   const sizes = offeredSizes(product);
   const tracked = isTracked(product);
   const stockNote = tracked
@@ -64,6 +65,7 @@ export default function ProductView({ data, product }) {
 
         <div className="pdp-info">
           {product.private && <span className="pdp-private">private · custom order</span>}
+          {state === "preorder" && <span className="pdp-preorder">pre-order</span>}
           <Link className="pdp-cat" href={`/shop/${slugify(product.cat)}`}>{product.cat}</Link>
           <h1 className="pdp-name">{product.name}</h1>
           <div className="pdp-price">{product.price}</div>
@@ -85,7 +87,7 @@ export default function ProductView({ data, product }) {
               <p className="pdp-note">add it to your cart and send an order request — we'll confirm sizing, specs, and final price by email, then get it to you.</p>
             </>
           ) : (
-            <NotifyForm product={product} />
+            <NotifyForm product={product} mode={state === "preorder" ? "preorder" : "notify"} />
           )}
         </div>
       </div>

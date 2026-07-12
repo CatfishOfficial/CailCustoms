@@ -1,15 +1,15 @@
 import Link from "next/link";
 import Frame from "./Frame";
-import { isAvailable, offeredSizes } from "@/lib/data";
+import { listingState, offeredSizes } from "@/lib/data";
 
 // Navigates to the shareable product page. Rendered as a link (was an in-memory
 // button in the prototype); keeps the `.card` styling and hover states.
 export default function ProductCard({ p, i, showSizes = false, highlight = false }) {
   const cover = (p.images || []).filter(Boolean)[0];
   const sizes = offeredSizes(p);
-  const available = isAvailable(p);
+  const state = listingState(p);
   return (
-    <Link href={`/product/${p.id}`} className={`card ${available ? "" : "card-unavail"} ${highlight ? "card-hl" : ""}`} style={{ animationDelay: `${i * 55}ms` }}>
+    <Link href={`/product/${p.id}`} className={`card ${state === "unavailable" ? "card-unavail" : ""} ${highlight ? "card-hl" : ""}`} style={{ animationDelay: `${i * 55}ms` }}>
       <div className="card-media">
         <Frame tone={p.tone} image={cover} />
         {highlight && (
@@ -24,7 +24,9 @@ export default function ProductCard({ p, i, showSizes = false, highlight = false
           </span>
         )}
         <span className="card-cat">{p.cat}</span>
-        {available ? <span className="card-inquire">view →</span> : <span className="card-soldout">unavailable</span>}
+        {state === "available" && <span className="card-inquire">view →</span>}
+        {state === "unavailable" && <span className="card-soldout">unavailable</span>}
+        {state === "preorder" && <span className="card-preorder">pre-order</span>}
       </div>
       <div className="card-body">
         <span className="card-name">{p.name}</span>

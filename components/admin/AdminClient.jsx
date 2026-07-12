@@ -89,7 +89,7 @@ async function flush(data) {
     id: p.id, name: p.name, cat: p.cat, price: p.price, tone: p.tone,
     blurb: p.blurb, description: p.desc, images: p.images, sizes: p.sizes || [],
     specs: p.specs || [], featured: p.featured, position: i, available: p.available !== false,
-    private: !!p.private,
+    preorder: !!p.preorder, private: !!p.private,
   }));
   if (prods.length) {
     const { error } = await supabase.from("products").upsert(prods);
@@ -173,7 +173,7 @@ export default function AdminClient({ initialData, userEmail }) {
     setData((d) => ({
       ...d,
       products: [
-        { id: uid(), name: "New listing", cat: d.categories[0]?.name || "Everything", price: "$0", tone: "t2", blurb: "", desc: "", images: [], sizes: [], specs: [], featured: false, available: true, stock: [], private: false },
+        { id: uid(), name: "New listing", cat: d.categories[0]?.name || "Everything", price: "$0", tone: "t2", blurb: "", desc: "", images: [], sizes: [], specs: [], featured: false, available: true, preorder: false, stock: [], private: false },
         ...d.products,
       ],
     }));
@@ -182,7 +182,7 @@ export default function AdminClient({ initialData, userEmail }) {
     setData((d) => ({
       ...d,
       products: [
-        { id, name: "Custom order", cat: d.categories[0]?.name || "Everything", price: "let's talk", tone: "t3", blurb: "", desc: "", images: [], sizes: [], specs: [], featured: false, available: true, stock: [], private: true },
+        { id, name: "Custom order", cat: d.categories[0]?.name || "Everything", price: "let's talk", tone: "t3", blurb: "", desc: "", images: [], sizes: [], specs: [], featured: false, available: true, preorder: false, stock: [], private: true },
         ...d.products,
       ],
     }));
@@ -344,6 +344,7 @@ export default function AdminClient({ initialData, userEmail }) {
                   <div className="adm-foot-checks">
                     <label className="adm-check"><input type="checkbox" checked={!!p.featured} onChange={(e) => patchProduct(p.id, { featured: e.target.checked })} /> featured</label>
                     <label className="adm-check"><input type="checkbox" checked={p.available !== false} onChange={(e) => patchProduct(p.id, { available: e.target.checked })} /> available {isTracked(p) ? "(auto-off at 0 stock)" : "(uncheck → notify-me)"}</label>
+                    <label className="adm-check"><input type="checkbox" checked={!!p.preorder} onChange={(e) => patchProduct(p.id, { preorder: e.target.checked })} /> pre-order (blue label + reserve form)</label>
                     <label className="adm-check"><input type="checkbox" checked={!!p.private} onChange={(e) => patchProduct(p.id, { private: e.target.checked })} /> private (link-only, hidden from shop)</label>
                   </div>
                   <div className="adm-foot-right">
