@@ -10,16 +10,19 @@ export default function ProductCard({ p, i, showSizes = false, highlight = false
   const available = isAvailable(p);
   return (
     <Link href={`/product/${p.id}`} className={`card ${available ? "" : "card-unavail"} ${highlight ? "card-hl" : ""}`} style={{ animationDelay: `${i * 55}ms` }}>
-      {highlight && (
-        <span className="card-flair" aria-hidden="true">
-          <span className="cf-rainbow" />
-          <span className="idea-float cf-f1">✿</span>
-          <span className="idea-float cf-f2">✶</span>
-          <span className="idea-float cf-f3">❋</span>
-        </span>
-      )}
       <div className="card-media">
         <Frame tone={p.tone} image={cover} />
+        {highlight && (
+          <span className="card-flair" aria-hidden="true">
+            <span className="cf-rainbow" />
+            <span className="idea-float cf-f1">✿</span>
+            <span className="idea-float cf-f2">✶</span>
+            <span className="idea-float cf-f3">❋</span>
+            <span className="idea-float cf-f4">✦</span>
+            <span className="idea-float cf-f5">❋</span>
+            <span className="idea-float cf-f6">✶</span>
+          </span>
+        )}
         <span className="card-cat">{p.cat}</span>
         {available ? <span className="card-inquire">view →</span> : <span className="card-soldout">unavailable</span>}
       </div>

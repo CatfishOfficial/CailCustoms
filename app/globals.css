@@ -595,13 +595,18 @@ body{background:#F2EEE4;}
 /* featured highlight on category (directory) pages — 70s floaties + a little
    rainbow arc above the card. Home screen is untouched (it never sets highlight). */
 .card-hl{position:relative;}
-.card-flair{position:absolute;top:0;left:0;right:0;height:0;z-index:5;pointer-events:none;}
-/* a small, clean rainbow arch peeking above the top-right corner */
-.cf-rainbow{position:absolute;top:-19px;right:12px;width:54px;height:27px;overflow:hidden;}
-.cf-rainbow::before{content:"";position:absolute;left:0;top:0;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 50% 50%,transparent 7px,#C1502E 7px 11px,#E8853B 11px 15px,#E9B44C 15px 19px,#7A8B4C 19px 23px,var(--accent) 23px 27px,transparent 27px);}
-.card-flair .idea-float{position:absolute;line-height:1;animation:bob70 5s ease-in-out infinite;}
-.card-flair .cf-f1{top:-15px;left:7%;font-size:17px;color:#7A8B4C;animation-delay:.2s;}
-.card-flair .cf-f2{top:-19px;left:33%;font-size:14px;color:var(--accent);animation-delay:1.1s;}
-.card-flair .cf-f3{top:-14px;left:55%;font-size:15px;color:#C1502E;animation-delay:1.9s;}
+/* flair overlays the frame itself (inside .card-media) and surrounds the product */
+.card-flair{position:absolute;inset:0;z-index:4;pointer-events:none;}
+.cf-rainbow{position:absolute;top:9px;right:11px;width:50px;height:25px;overflow:hidden;transform-origin:50% 100%;filter:drop-shadow(0 1px 2px rgba(0,0,0,.3));animation:cfWobble 3.4s ease-in-out infinite;}
+.cf-rainbow::before{content:"";position:absolute;left:0;top:0;width:50px;height:50px;border-radius:50%;background:radial-gradient(circle at 50% 50%,transparent 6px,#C1502E 6px 10px,#E8853B 10px 14px,#E9B44C 14px 18px,#7A8B4C 18px 22px,var(--accent) 22px 25px,transparent 25px);}
+.card-flair .idea-float{position:absolute;line-height:1;text-shadow:0 1px 3px rgba(0,0,0,.4);animation:bob70 5s ease-in-out infinite;}
+.card-flair .cf-f1{top:7%;left:33%;font-size:17px;color:#EBD27A;animation-delay:.2s;}
+.card-flair .cf-f2{top:24%;left:6%;font-size:15px;color:#fff;animation-delay:1.1s;}
+.card-flair .cf-f3{top:54%;left:7%;font-size:16px;color:#E8853B;animation-delay:1.9s;}
+.card-flair .cf-f4{top:82%;left:22%;font-size:15px;color:#C4A6E8;animation-delay:.7s;}
+.card-flair .cf-f5{top:60%;left:83%;font-size:17px;color:#B7C98A;animation-delay:2.3s;}
+.card-flair .cf-f6{top:34%;left:88%;font-size:14px;color:#AEB9E8;animation-delay:1.5s;}
 .card-hl:hover .card-flair .idea-float{animation-duration:1.6s;}
-@media (prefers-reduced-motion: reduce){.card-flair .idea-float{animation:none;}}
+.card-hl:hover .cf-rainbow{animation-duration:1.5s;}
+@keyframes cfWobble{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+@media (prefers-reduced-motion: reduce){.card-flair .idea-float,.cf-rainbow{animation:none;}}
