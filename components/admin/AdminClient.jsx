@@ -342,7 +342,7 @@ export default function AdminClient({ initialData, userEmail }) {
                 </div>
                 <div className="adm-item-foot">
                   <div className="adm-foot-checks">
-                    <label className="adm-check"><input type="checkbox" checked={!!p.featured} onChange={(e) => patchProduct(p.id, { featured: e.target.checked })} /> featured on home</label>
+                    <label className="adm-check"><input type="checkbox" checked={!!p.featured} onChange={(e) => patchProduct(p.id, { featured: e.target.checked })} /> featured</label>
                     <label className="adm-check"><input type="checkbox" checked={p.available !== false} onChange={(e) => patchProduct(p.id, { available: e.target.checked })} /> available {isTracked(p) ? "(auto-off at 0 stock)" : "(uncheck → notify-me)"}</label>
                     <label className="adm-check"><input type="checkbox" checked={!!p.private} onChange={(e) => patchProduct(p.id, { private: e.target.checked })} /> private (link-only, hidden from shop)</label>
                   </div>

@@ -10,6 +10,9 @@ export default function CategoryView({ data, cat }) {
   const products = publicProducts(data.products);
   const isAll = cat === "All";
   const list = isAll ? products : products.filter((p) => p.cat === cat);
+  // Featured listings float to the front (after the ITEM box); order is
+  // otherwise preserved (Array.sort is stable).
+  const ordered = [...list].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
   const meta = categories.find((c) => c.name === cat);
   // The "all products" view pitches to the catch-all category.
   const ideaCat = isAll ? categories.find((c) => c.name === "Everything") || categories[0] : meta;
@@ -80,7 +83,7 @@ export default function CategoryView({ data, cat }) {
               </div>
             </Link>
           )}
-          {list.map((p, i) => (
+          {ordered.map((p, i) => (
             <ProductCard key={p.id} p={p} i={i} showSizes={isApparel} highlight={!!p.featured} />
           ))}
         </div>
