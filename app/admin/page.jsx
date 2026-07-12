@@ -16,11 +16,12 @@ export default async function AdminHubPage() {
   if (!user) redirect("/admin/login");
   if (!(await checkIsAdmin(supabase))) redirect("/account");
 
-  const [ordersRes, ideasRes] = await Promise.all([
+  const [ordersRes, ideasRes, preordersRes] = await Promise.all([
     supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "new"),
     supabase.from("idea_submissions").select("id", { count: "exact", head: true }).eq("status", "new"),
+    supabase.from("restock_requests").select("id", { count: "exact", head: true }).eq("status", "new").eq("kind", "preorder"),
   ]);
-  const waiting = (ordersRes.count || 0) + (ideasRes.count || 0);
+  const waiting = (ordersRes.count || 0) + (ideasRes.count || 0) + (preordersRes.count || 0);
 
   return (
     <section className="admin">
