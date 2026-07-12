@@ -24,6 +24,7 @@ export default function ProductCard({ p, i, showSizes = false, highlight = false
           </span>
         )}
         <span className="card-cat">{p.cat}</span>
+        {p.custom && <span className="card-custom">✦ custom</span>}
         {state === "available" && <span className="card-inquire">view →</span>}
         {state === "unavailable" && <span className="card-soldout">unavailable</span>}
         {state === "preorder" && <span className="card-preorder">pre-order</span>}
