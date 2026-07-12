@@ -591,3 +591,16 @@ body{background:#F2EEE4;}
 .ord-link{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);}
 .ord-link label{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
 .ord-link .adm-select{max-width:260px;}
+
+/* featured highlight on category (directory) pages — 70s floaties + a little
+   rainbow arc above the card. Home screen is untouched (it never sets highlight). */
+.card-hl{position:relative;}
+.card-flair{position:absolute;top:0;left:0;right:0;height:0;z-index:7;pointer-events:none;}
+.cf-arcbox{position:absolute;top:-30px;right:-8px;width:92px;height:62px;overflow:hidden;border-radius:8px;opacity:.95;}
+.card-flair .idea-float{position:absolute;line-height:1;animation:bob70 5s ease-in-out infinite;}
+.card-flair .cf-f1{top:-24px;left:9%;font-size:20px;color:#7A8B4C;animation-delay:.2s;}
+.card-flair .cf-f2{top:-30px;left:42%;font-size:16px;color:var(--accent);animation-delay:1.1s;}
+.card-flair .cf-f3{top:-19px;left:66%;font-size:18px;color:#C1502E;animation-delay:1.9s;}
+.card-hl:hover .cf-arcbox{opacity:1;}
+.card-hl:hover .card-flair .idea-float{animation-duration:1.6s;}
+@media (prefers-reduced-motion: reduce){.card-flair .idea-float{animation:none;}}

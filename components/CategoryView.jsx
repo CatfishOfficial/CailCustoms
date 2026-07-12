@@ -81,7 +81,7 @@ export default function CategoryView({ data, cat }) {
             </Link>
           )}
           {list.map((p, i) => (
-            <ProductCard key={p.id} p={p} i={i} showSizes={isApparel} />
+            <ProductCard key={p.id} p={p} i={i} showSizes={isApparel} highlight={!!p.featured} />
           ))}
         </div>
       ) : (

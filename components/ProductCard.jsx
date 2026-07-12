@@ -4,12 +4,20 @@ import { isAvailable, offeredSizes } from "@/lib/data";
 
 // Navigates to the shareable product page. Rendered as a link (was an in-memory
 // button in the prototype); keeps the `.card` styling and hover states.
-export default function ProductCard({ p, i, showSizes = false }) {
+export default function ProductCard({ p, i, showSizes = false, highlight = false }) {
   const cover = (p.images || []).filter(Boolean)[0];
   const sizes = offeredSizes(p);
   const available = isAvailable(p);
   return (
-    <Link href={`/product/${p.id}`} className={`card ${available ? "" : "card-unavail"}`} style={{ animationDelay: `${i * 55}ms` }}>
+    <Link href={`/product/${p.id}`} className={`card ${available ? "" : "card-unavail"} ${highlight ? "card-hl" : ""}`} style={{ animationDelay: `${i * 55}ms` }}>
+      {highlight && (
+        <span className="card-flair" aria-hidden="true">
+          <span className="cf-arcbox"><span className="idea-arcs" /></span>
+          <span className="idea-float cf-f1">✿</span>
+          <span className="idea-float cf-f2">✶</span>
+          <span className="idea-float cf-f3">❋</span>
+        </span>
+      )}
       <div className="card-media">
         <Frame tone={p.tone} image={cover} />
         <span className="card-cat">{p.cat}</span>
