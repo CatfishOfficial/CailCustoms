@@ -11,29 +11,38 @@ import JsonLd from "@/components/JsonLd";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 const DEFAULT_SOCIALS = ["https://www.instagram.com/", "https://www.youtube.com/"];
 
-export const metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: "Cail Customs — make cool stuff.",
-    template: "%s · Cail Customs",
-  },
-  description:
-    "a small crew making a lot of different things — shirts, circuits, sound, design. contact-to-buy, made in Lubbock, TX.",
-  openGraph: {
-    title: "Cail Customs — make cool stuff.",
-    description: "shirts, circuits, sound, design. made in Lubbock, TX.",
-    type: "website",
-    siteName: "Cail Customs",
-    locale: "en_US",
-    images: [{ url: "/logo-full.png", alt: "Cail Customs" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Cail Customs — make cool stuff.",
-    description: "shirts, circuits, sound, design. made in Lubbock, TX.",
-    images: ["/logo-full.png"],
-  },
-};
+// Site-wide default metadata. The link-preview image is the first hero image
+// that has one set (nicer than the bare logo when shared to iMessage/socials);
+// it falls back to the logo when no hero image exists. Product pages still
+// override this with their own cover.
+export async function generateMetadata() {
+  const data = await getSiteData();
+  const heroImage = (data.heroSlides || []).map((s) => s.image).find(Boolean);
+  const ogImage = heroImage || "/logo-full.png";
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: "Cail Customs — make cool stuff.",
+      template: "%s · Cail Customs",
+    },
+    description:
+      "a small crew making a lot of different things — shirts, circuits, sound, design. contact-to-buy, made in Lubbock, TX.",
+    openGraph: {
+      title: "Cail Customs — make cool stuff.",
+      description: "shirts, circuits, sound, design. made in Lubbock, TX.",
+      type: "website",
+      siteName: "Cail Customs",
+      locale: "en_US",
+      images: [{ url: ogImage, alt: "Cail Customs" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Cail Customs — make cool stuff.",
+      description: "shirts, circuits, sound, design. made in Lubbock, TX.",
+      images: [ogImage],
+    },
+  };
+}
 
 export default async function RootLayout({ children }) {
   const data = await getSiteData();
