@@ -6,6 +6,7 @@ import Frame from "./Frame";
 import ProductCard from "./ProductCard";
 import AddToCart from "./cart/AddToCart";
 import NotifyForm from "./NotifyForm";
+import RainbowText from "./RainbowText";
 import { mailtoHref, slugify, specsFor, listingState, isTracked, offeredSizes } from "@/lib/data";
 
 export default function ProductView({ data, product }) {
@@ -65,7 +66,7 @@ export default function ProductView({ data, product }) {
 
         <div className="pdp-info">
           {product.private && <span className="pdp-private">private · custom order</span>}
-          {product.custom && <span className="pdp-custom">✦ custom design</span>}
+          {product.custom && <span className="pdp-custom"><RainbowText text="custom design" /></span>}
           {state === "preorder" && <span className="pdp-preorder">pre-order</span>}
           <Link className="pdp-cat" href={`/shop/${slugify(product.cat)}`}>{product.cat}</Link>
           <h1 className="pdp-name">{product.name}</h1>

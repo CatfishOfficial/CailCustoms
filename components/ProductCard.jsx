@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Frame from "./Frame";
 import { listingState, offeredSizes } from "@/lib/data";
+import RainbowText from "./RainbowText";
 
 // Navigates to the shareable product page. Rendered as a link (was an in-memory
 // button in the prototype); keeps the `.card` styling and hover states.
@@ -24,7 +25,7 @@ export default function ProductCard({ p, i, showSizes = false, highlight = false
           </span>
         )}
         <span className="card-cat">{p.cat}</span>
-        {p.custom && <span className="card-custom">✦ custom</span>}
+        {p.custom && <span className="card-custom"><RainbowText text="custom" /></span>}
         {state === "available" && <span className="card-inquire">view →</span>}
         {state === "unavailable" && <span className="card-soldout">unavailable</span>}
         {state === "preorder" && <span className="card-preorder">pre-order</span>}
