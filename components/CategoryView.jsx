@@ -2,7 +2,10 @@ import Link from "next/link";
 import ProductCard from "./ProductCard";
 import IdeaCta from "./IdeaCta";
 import Frame from "./Frame";
-import { slugify, ALL_SLUG, topLevel, childrenOf, countIn, publicProducts } from "@/lib/data";
+import { slugify, ALL_SLUG, topLevel, childrenOf, countIn, publicProducts, listingState } from "@/lib/data";
+
+// available listings show first, then preorder, then unavailable last.
+const STATE_RANK = { available: 0, preorder: 1, unavailable: 2 };
 
 // `cat` is a category name, or "All" for the everything/all-products view.
 export default function CategoryView({ data, cat }) {
@@ -10,9 +13,14 @@ export default function CategoryView({ data, cat }) {
   const products = publicProducts(data.products);
   const isAll = cat === "All";
   const list = isAll ? products : products.filter((p) => p.cat === cat);
-  // Featured listings float to the front (after the ITEM box); order is
-  // otherwise preserved (Array.sort is stable).
-  const ordered = [...list].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+  // Available listings first, then preorder, then unavailable last. Featured
+  // listings float to the front within their bucket; order is otherwise
+  // preserved (Array.sort is stable).
+  const ordered = [...list].sort((a, b) => {
+    const byState = STATE_RANK[listingState(a)] - STATE_RANK[listingState(b)];
+    if (byState !== 0) return byState;
+    return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+  });
   const meta = categories.find((c) => c.name === cat);
   // The "all products" view pitches to the catch-all category.
   const ideaCat = isAll ? categories.find((c) => c.name === "Everything") || categories[0] : meta;
