@@ -5,12 +5,13 @@ import RainbowText from "./RainbowText";
 
 // Navigates to the shareable product page. Rendered as a link (was an in-memory
 // button in the prototype); keeps the `.card` styling and hover states.
-export default function ProductCard({ p, i, showSizes = false, highlight = false }) {
+export default function ProductCard({ p, i, layout = "standard", showSizes = false, highlight = false }) {
   const cover = (p.images || []).filter(Boolean)[0];
   const sizes = offeredSizes(p);
   const state = listingState(p);
+  const layoutClass = layout === "square" ? "card-square" : layout === "windows" ? "card-window" : "";
   return (
-    <Link href={`/product/${p.id}`} className={`card ${state === "unavailable" ? "card-unavail" : ""} ${highlight ? "card-hl" : ""}`} style={{ animationDelay: `${i * 55}ms` }}>
+    <Link href={`/product/${p.id}`} className={`card ${layoutClass} ${state === "unavailable" ? "card-unavail" : ""} ${highlight ? "card-hl" : ""}`} style={{ animationDelay: `${i * 55}ms` }}>
       <div className="card-media">
         <Frame tone={p.tone} image={cover} />
         {highlight && (

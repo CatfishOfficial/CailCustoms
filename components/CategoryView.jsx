@@ -25,7 +25,9 @@ export default function CategoryView({ data, cat }) {
   // The "all products" view pitches to the catch-all category.
   const ideaCat = isAll ? categories.find((c) => c.name === "Everything") || categories[0] : meta;
   const subs = meta ? childrenOf(categories, meta.id) : [];
-  const isApparel = meta?.layout === "apparel";
+  const layout = meta?.layout || "standard";
+  const isApparel = layout === "apparel";
+  const layoutMod = layout === "square" ? "square" : layout === "windows" ? "window" : "";
   const showItemBox = !!meta?.isItem;
   const hasItems = list.length > 0 || showItemBox;
 
@@ -72,9 +74,9 @@ export default function CategoryView({ data, cat }) {
       {subs.length > 0 && hasItems && <div className="subcat-divider" aria-hidden="true" />}
 
       {hasItems ? (
-        <div className="grid">
+        <div className={`grid ${layoutMod ? `grid-${layoutMod}` : ""}`}>
           {showItemBox && meta && (
-            <Link className="grididea" href={`/ideas/${slugify(meta.name)}`}>
+            <Link className={`grididea ${layoutMod ? `grididea-${layoutMod}` : ""}`} href={`/ideas/${slugify(meta.name)}`}>
               <div className="grididea-media">
                 <span className="idea-arcs" aria-hidden="true" />
                 <span className="idea-burst" aria-hidden="true">✶</span>
@@ -92,7 +94,7 @@ export default function CategoryView({ data, cat }) {
             </Link>
           )}
           {ordered.map((p, i) => (
-            <ProductCard key={p.id} p={p} i={i} showSizes={isApparel} highlight={!!p.featured} />
+            <ProductCard key={p.id} p={p} i={i} layout={layout} showSizes={isApparel} highlight={!!p.featured} />
           ))}
         </div>
       ) : (
