@@ -60,7 +60,7 @@ export default function AddToCart({ product, sizes: sizesProp }) {
               {sizes.map((s) => (
                 <button
                   key={s.size}
-                  className={`chip ${size === s.size ? "on" : ""} ${!s.inStock ? "chip-preorder" : ""}`}
+                  className={`chip ${size === s.size ? "on" : ""} ${s.inStock ? "chip-instock" : "chip-preorder"}`}
                   onClick={() => setSize(s.size)}
                   aria-pressed={size === s.size}
                 >

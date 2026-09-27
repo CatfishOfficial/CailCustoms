@@ -144,9 +144,12 @@ body{background:#F2EEE4;}
 .cc .chip:hover{border-color:var(--ink);color:var(--ink);transform:translateY(-1px);}
 .cc .chip.on{background:var(--ink);border-color:var(--ink);color:var(--paper);}
 .cc .chip:active{transform:translateY(1px) scale(.97);transition-duration:.05s;}
-.cc .chip.chip-preorder{color:var(--accent);border-color:var(--accent);background:rgba(37,64,230,.08);}
-.cc .chip.chip-preorder:hover{border-color:var(--accent);color:var(--accent);}
-.cc .chip.chip-preorder.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.cc .chip.chip-instock{color:var(--accent);border-color:var(--accent);background:rgba(37,64,230,.08);}
+.cc .chip.chip-instock:hover{border-color:var(--accent);color:var(--accent);}
+.cc .chip.chip-instock.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.cc .chip.chip-preorder{color:var(--muted);border-color:var(--line);background:rgba(114,108,96,.1);}
+.cc .chip.chip-preorder:hover{border-color:var(--muted);color:var(--muted);}
+.cc .chip.chip-preorder.on{background:var(--muted);border-color:var(--muted);color:#fff;}
 
 /* product detail */
 .pdp{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,4vw,52px);align-items:start;}
