@@ -138,11 +138,11 @@ body{background:#F2EEE4;}
 
 /* "windows" layout — one full-width landscape card per row, the same width
    as the .idea-cta custom-idea banner (both stretch to fill .page). */
-.card.card-window{flex-direction:row;align-items:center;gap:clamp(16px,2.4vw,24px);border:2px solid var(--ink);border-radius:22px;padding:clamp(14px,1.8vw,20px);background:var(--card);transition:transform .22s cubic-bezier(.16,1,.3,1),box-shadow .22s;}
+.card.card-window{border:2px solid var(--ink);border-radius:22px;overflow:hidden;background:var(--card);transition:transform .22s cubic-bezier(.16,1,.3,1),box-shadow .22s;}
 .card.card-window:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(24,23,19,.16);}
-.card.card-window .card-media{width:clamp(120px,18vw,200px);flex:0 0 clamp(120px,18vw,200px);aspect-ratio:1/1;}
-.card.card-window:hover .card-media{transform:none;border-color:var(--line);}
-.card.card-window .card-body{flex:1;padding:0;}
+.card.card-window .card-media{aspect-ratio:16/9;border:none;border-radius:0;}
+.card.card-window:hover .card-media{transform:none;}
+.card.card-window .card-body{padding:16px 20px 18px;}
 
 /* generic page */
 .page{max-width:1360px;margin:0 auto;padding:clamp(28px,5vw,52px) clamp(20px,5vw,60px) clamp(56px,7vw,90px);}
@@ -264,7 +264,7 @@ body{background:#F2EEE4;}
 @media(max-width:860px){.hero{grid-template-columns:1fr;}.hero-media{order:-1;aspect-ratio:4/5;min-height:0;max-height:70vh;}.contact-grid{grid-template-columns:1fr;}.cat-grid{grid-template-columns:repeat(2,1fr);}.pdp{grid-template-columns:1fr;}.pdp-info{position:static;}.foot-inner{grid-template-columns:1fr;gap:36px;}}
 @media(max-width:720px){.adm-item{grid-template-columns:1fr;}.adm-row2{grid-template-columns:1fr;}.adm-grid2{grid-template-columns:1fr;}}
 @media(max-width:700px){.links{display:none;}}
-@media(max-width:560px){.grid{grid-template-columns:1fr;}.grid.grid-square{grid-template-columns:1fr;}.cat-grid{grid-template-columns:1fr;}.card.card-window{flex-direction:column;align-items:stretch;}.card.card-window .card-media{width:100%;flex:none;aspect-ratio:4/5;}}
+@media(max-width:560px){.grid{grid-template-columns:1fr;}.grid.grid-square{grid-template-columns:1fr;}.cat-grid{grid-template-columns:1fr;}}
 @media(max-width:520px){.foot-cols{grid-template-columns:1fr 1fr;}}
 
 /* reduced motion */
@@ -532,14 +532,7 @@ body{background:#F2EEE4;}
 
 /* grididea layout variants — mirror the product-card square/window treatments */
 .cc .grididea.grididea-square .grididea-media{aspect-ratio:1/1;}
-.cc .grididea.grididea-window{flex-direction:row;align-items:center;gap:clamp(16px,2.4vw,24px);}
-.cc .grididea.grididea-window .grididea-media{width:clamp(120px,18vw,200px);flex:0 0 clamp(120px,18vw,200px);aspect-ratio:1/1;padding:clamp(10px,1.4vw,16px);align-items:center;text-align:center;}
-.cc .grididea.grididea-window .grididea-title{font-size:clamp(14px,1.5vw,19px);}
-.cc .grididea.grididea-window .grididea-eyebrow{font-size:9px;padding:4px 8px;}
-.cc .grididea.grididea-window .idea-burst{font-size:22px;top:6px;right:8px;}
-.cc .grididea.grididea-window .idea-squiggle,.cc .grididea.grididea-window .idea-float{display:none;}
-.cc .grididea.grididea-window .card-body{flex:1;padding:0;}
-@media(max-width:560px){.cc .grididea.grididea-window{flex-direction:column;align-items:stretch;}.cc .grididea.grididea-window .grididea-media{width:100%;flex:none;aspect-ratio:4/5;align-items:flex-start;text-align:left;padding:clamp(18px,2vw,26px);}.cc .grididea.grididea-window .grididea-title{font-size:clamp(26px,2.7vw,40px);}.cc .grididea.grididea-window .grididea-eyebrow{font-size:11px;padding:6px 11px;}.cc .grididea.grididea-window .idea-burst{font-size:38px;top:14px;right:16px;}.cc .grididea.grididea-window .idea-squiggle{display:block;}}
+.cc .grididea.grididea-window .grididea-media{aspect-ratio:16/9;}
 
 /* apparel size hint on cards */
 .card-sizes{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:0 2px 2px;}
