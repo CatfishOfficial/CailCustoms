@@ -53,6 +53,7 @@ export default function CartDrawer() {
                     <div className="cart-line-info">
                       <span className="cart-line-name">{it.name}</span>
                       {it.size && <span className="cart-line-size">size {it.size}</span>}
+                      {it.preorder && <span className="cart-line-badge">pre-order</span>}
                       <span className="cart-line-price">{it.price}</span>
                     </div>
                     <div className="cart-line-ctl">

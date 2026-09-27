@@ -7,7 +7,7 @@ import ProductCard from "./ProductCard";
 import AddToCart from "./cart/AddToCart";
 import NotifyForm from "./NotifyForm";
 import RainbowText from "./RainbowText";
-import { mailtoHref, slugify, specsFor, listingState, isTracked, offeredSizes } from "@/lib/data";
+import { mailtoHref, slugify, specsFor, listingState, isTracked, sizeStatuses } from "@/lib/data";
 
 export default function ProductView({ data, product }) {
   const { products } = data;
@@ -22,7 +22,7 @@ export default function ProductView({ data, product }) {
   const specs = specsFor(product);
   const state = listingState(product);
   const available = state === "available";
-  const sizes = offeredSizes(product);
+  const sizes = sizeStatuses(product);
   const tracked = isTracked(product);
   const stockNote = tracked
     ? (product.stock || [])

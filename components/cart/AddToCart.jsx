@@ -8,21 +8,24 @@ import { useCart } from "./CartContext";
 // a quick size-confirm dialog first. Opening the drawer is the "added" feedback.
 export default function AddToCart({ product, sizes: sizesProp }) {
   const { addItem, openCart } = useCart();
-  const sizes = (sizesProp || product.sizes || []).filter(Boolean);
+  const sizes = (sizesProp || (product.sizes || []).map((size) => ({ size, inStock: true }))).filter((s) => s.size);
   const [modal, setModal] = useState(false);
   const [size, setSize] = useState("");
   const dialogRef = useRef(null);
   const returnRef = useRef(null);
 
-  const add = (chosen) => {
-    addItem(product, chosen);
+  const selected = sizes.find((s) => s.size === size);
+  const preorder = !!selected && !selected.inStock;
+
+  const add = (chosen, isPreorder) => {
+    addItem(product, chosen, isPreorder);
     setModal(false);
     setSize("");
     openCart();
   };
 
   const onClick = () => {
-    if (sizes.length === 0) return add(null);
+    if (sizes.length === 0) return add(null, false);
     setSize("");
     setModal(true);
   };
@@ -55,13 +58,18 @@ export default function AddToCart({ product, sizes: sizesProp }) {
             <p className="modal-name">{product.name}</p>
             <div className="size-chips">
               {sizes.map((s) => (
-                <button key={s} className={`chip ${size === s ? "on" : ""}`} onClick={() => setSize(s)} aria-pressed={size === s}>
-                  {s.toLowerCase()}
+                <button
+                  key={s.size}
+                  className={`chip ${size === s.size ? "on" : ""} ${!s.inStock ? "chip-preorder" : ""}`}
+                  onClick={() => setSize(s.size)}
+                  aria-pressed={size === s.size}
+                >
+                  {s.size.toLowerCase()}
                 </button>
               ))}
             </div>
-            <button className="btn modal-confirm" disabled={!size} onClick={() => add(size)}>
-              {size ? `add — size ${size.toLowerCase()}` : "pick one first"}
+            <button className="btn modal-confirm" disabled={!size} onClick={() => add(size, preorder)}>
+              {size ? (preorder ? `pre-order — size ${size.toLowerCase()}` : `add — size ${size.toLowerCase()}`) : "pick one first"}
             </button>
           </div>
         </div>

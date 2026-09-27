@@ -144,6 +144,9 @@ body{background:#F2EEE4;}
 .cc .chip:hover{border-color:var(--ink);color:var(--ink);transform:translateY(-1px);}
 .cc .chip.on{background:var(--ink);border-color:var(--ink);color:var(--paper);}
 .cc .chip:active{transform:translateY(1px) scale(.97);transition-duration:.05s;}
+.cc .chip.chip-preorder{color:var(--accent);border-color:var(--accent);background:rgba(37,64,230,.08);}
+.cc .chip.chip-preorder:hover{border-color:var(--accent);color:var(--accent);}
+.cc .chip.chip-preorder.on{background:var(--accent);border-color:var(--accent);color:#fff;}
 
 /* product detail */
 .pdp{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,4vw,52px);align-items:start;}
@@ -294,6 +297,7 @@ body{background:#F2EEE4;}
 .cart-line-info{display:flex;flex-direction:column;gap:3px;min-width:0;}
 .cart-line-name{font-weight:600;font-size:14px;}
 .cart-line-size{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
+.cart-line-badge{align-self:flex-start;font-family:var(--mono);font-weight:700;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--accent);padding:2px 7px;border-radius:999px;}
 .cart-line-price{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--accent);}
 .cart-line-ctl{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
 .cart-qty{display:flex;align-items:center;gap:2px;border:1px solid var(--line);border-radius:2px;}

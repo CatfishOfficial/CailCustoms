@@ -41,7 +41,7 @@ export default function OrderForm({ settings }) {
         phone,
         contacts: contacts.filter((c) => c.value.trim()),
         message,
-        items: items.map(({ id, name: n, price, size, qty }) => ({ id, name: n, price, size, qty })),
+        items: items.map(({ id, name: n, price, size, qty, preorder }) => ({ id, name: n, price, size, qty, preorder: !!preorder })),
       });
       if (error) throw error;
       setSent(email);

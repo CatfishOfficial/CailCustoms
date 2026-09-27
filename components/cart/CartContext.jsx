@@ -45,7 +45,7 @@ export function CartProvider({ children }) {
     };
   }, [open]);
 
-  const addItem = useCallback((product, size) => {
+  const addItem = useCallback((product, size, preorder) => {
     setItems((list) => {
       const key = lineKey(product.id, size);
       const existing = list.find((it) => lineKey(it.id, it.size) === key);
@@ -55,7 +55,7 @@ export function CartProvider({ children }) {
       const cover = (product.images || []).filter(Boolean)[0] || "";
       return [
         ...list,
-        { id: product.id, name: product.name, price: product.price, cat: product.cat, tone: product.tone, image: cover, size: size || "", qty: 1 },
+        { id: product.id, name: product.name, price: product.price, cat: product.cat, tone: product.tone, image: cover, size: size || "", qty: 1, preorder: !!preorder },
       ];
     });
   }, []);
