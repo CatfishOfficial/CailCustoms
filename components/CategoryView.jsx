@@ -2,7 +2,7 @@ import Link from "next/link";
 import ProductCard from "./ProductCard";
 import IdeaCta from "./IdeaCta";
 import Frame from "./Frame";
-import { slugify, ALL_SLUG, topLevel, childrenOf, countIn, publicProducts, listingState } from "@/lib/data";
+import { slugify, ALL_SLUG, topLevel, childrenOf, countIn, publicProducts, listingState, parentOf } from "@/lib/data";
 
 // available listings show first, then preorder, then unavailable last.
 const STATE_RANK = { available: 0, preorder: 1, unavailable: 2 };
@@ -16,6 +16,7 @@ export default function CategoryView({ data, cat }) {
   // The "all products" view pitches to the catch-all category.
   const ideaCat = isAll ? categories.find((c) => c.name === "Everything") || categories[0] : meta;
   const subs = meta ? childrenOf(categories, meta.id) : [];
+  const parentCat = parentOf(categories, meta);
   // A parent category's page also lists its sub-categories' items, so
   // browsing "Shirts & Merch" shows everything under it, not just products
   // tagged to that exact name.
@@ -37,7 +38,17 @@ export default function CategoryView({ data, cat }) {
 
   return (
     <section className="page">
-      <Link className="crumb" href="/">← home</Link>
+      {parentCat ? (
+        <div className="crumbs">
+          <Link className="crumb" href="/">home</Link>
+          <span>/</span>
+          <Link className="crumb" href={`/shop/${slugify(parentCat.name)}`}>{parentCat.name.toLowerCase()}</Link>
+          <span>/</span>
+          <span className="crumb-here">{cat.toLowerCase()}</span>
+        </div>
+      ) : (
+        <Link className="crumb" href="/">← home</Link>
+      )}
       <div className="cat-head">
         <span className="sec-eyebrow">{isAll ? "everything" : "category"}</span>
         <h2 className="cat-title">{cat}</h2>

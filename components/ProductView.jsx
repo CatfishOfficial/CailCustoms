@@ -7,10 +7,12 @@ import ProductCard from "./ProductCard";
 import AddToCart from "./cart/AddToCart";
 import NotifyForm from "./NotifyForm";
 import RainbowText from "./RainbowText";
-import { mailtoHref, slugify, specsFor, listingState, isTracked, sizeStatuses } from "@/lib/data";
+import { mailtoHref, slugify, specsFor, listingState, isTracked, sizeStatuses, parentOf } from "@/lib/data";
 
 export default function ProductView({ data, product }) {
-  const { products } = data;
+  const { products, categories } = data;
+  const productCat = categories.find((c) => c.name === product.cat) || null;
+  const parentCat = parentOf(categories, productCat);
   const imgs = (product.images || []).filter(Boolean);
   const useImg = imgs.length > 0;
   const gallery = useImg
@@ -36,6 +38,12 @@ export default function ProductView({ data, product }) {
       <div className="crumbs">
         <Link className="crumb" href="/">home</Link>
         <span>/</span>
+        {parentCat && (
+          <>
+            <Link className="crumb" href={`/shop/${slugify(parentCat.name)}`}>{parentCat.name.toLowerCase()}</Link>
+            <span>/</span>
+          </>
+        )}
         <Link className="crumb" href={`/shop/${slugify(product.cat)}`}>{product.cat.toLowerCase()}</Link>
         <span>/</span>
         <span className="crumb-here">{product.name.toLowerCase()}</span>
