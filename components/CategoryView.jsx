@@ -12,7 +12,15 @@ export default function CategoryView({ data, cat }) {
   const { categories } = data;
   const products = publicProducts(data.products);
   const isAll = cat === "All";
-  const list = isAll ? products : products.filter((p) => p.cat === cat);
+  const meta = categories.find((c) => c.name === cat);
+  // The "all products" view pitches to the catch-all category.
+  const ideaCat = isAll ? categories.find((c) => c.name === "Everything") || categories[0] : meta;
+  const subs = meta ? childrenOf(categories, meta.id) : [];
+  // A parent category's page also lists its sub-categories' items, so
+  // browsing "Shirts & Merch" shows everything under it, not just products
+  // tagged to that exact name.
+  const subNames = subs.map((s) => s.name);
+  const list = isAll ? products : products.filter((p) => p.cat === cat || subNames.includes(p.cat));
   // Available listings first, then preorder, then unavailable last. Featured
   // listings float to the front within their bucket; order is otherwise
   // preserved (Array.sort is stable).
@@ -21,10 +29,6 @@ export default function CategoryView({ data, cat }) {
     if (byState !== 0) return byState;
     return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
   });
-  const meta = categories.find((c) => c.name === cat);
-  // The "all products" view pitches to the catch-all category.
-  const ideaCat = isAll ? categories.find((c) => c.name === "Everything") || categories[0] : meta;
-  const subs = meta ? childrenOf(categories, meta.id) : [];
   const layout = meta?.layout || "standard";
   const isApparel = layout === "apparel";
   const layoutMod = layout === "square" ? "square" : layout === "windows" ? "window" : "";
